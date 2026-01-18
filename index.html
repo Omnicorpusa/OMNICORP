@@ -79,11 +79,16 @@
     .title .light { font-weight: 250; }
 
     .email {
-        margin-top: 7px;
-        font-size: clamp(5px, 2.2vw, 18px);
-        color: var(--muted);
-        letter-spacing: 0.02em;
-    }
+    margin-top: 5px;
+    font-size: clamp(2.5px, 2.2vw, 18px);
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+}
+
+.email:hover {
+    text-decoration: underline;
+}
 
     .tagline {
         margin-top: 28px;
@@ -102,9 +107,9 @@
             <span class="bold">OMNI</span><span class="light">CORP</span>
         </h1>
 
-        <div class="email intro delay-2">
-            support@omnicorpusa.com
-        </div>
+        <a class="email intro delay-2" href="https://www.omnicorpusa.com" target="_blank" rel="noopener">
+    www.omnicorpusa.com
+</a>
 
         <div class="tagline intro delay-3"></div>
     </main>
