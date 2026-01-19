@@ -12,7 +12,7 @@
   --bg:#ffffff;
   --fg:#0b0b0d;
   --muted:rgba(11,11,13,.55);
-  --halo-opacity:.45;
+  --halo-opacity:.65;
   --menu-bg:rgba(255,255,255,.96);
 }
 
@@ -21,7 +21,6 @@
     --bg:#000000;
     --fg:#ffffff;
     --muted:rgba(255,255,255,.55);
-    --halo-opacity:.65;
     --menu-bg:rgba(0,0,0,.92);
   }
   html{ color-scheme:dark; }
@@ -30,51 +29,51 @@
 /* ───────── Base ───────── */
 
 *{ box-sizing:border-box; }
-html,body{ height:100%; margin:0; }
+
+html,body{
+  height:100%;
+  margin:0;
+}
 
 body{
   background:var(--bg);
   color:var(--fg);
   font-family:system-ui,-apple-system,BlinkMacSystemFont,
     "Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  padding:
-    env(safe-area-inset-top)
-    env(safe-area-inset-right)
-    env(safe-area-inset-bottom)
-    env(safe-area-inset-left);
+
+  display:grid;
+  grid-template-rows:1fr auto;
+
+  padding:5%;
 }
 
 /* ───────── Header / Menu Button ───────── */
 
 header{
   position:fixed;
-  top:0;
-  right:0;
-  padding:14px 16px;
+  top:5%;
+  right:5%;
   z-index:10;
 }
 
 .menu-btn{
-  width:36px;
-  height:36px;
+  width:10%;
+  max-width:36px;
+  aspect-ratio:1/1;
   border:none;
   background:transparent;
   color:var(--fg);
   cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+
+  display:grid;
+  place-items:center;
 }
 
 .menu-btn span{
-  width:18px;
+  width:50%;
   height:2px;
   background:currentColor;
   position:relative;
-  display:block;
 }
 
 .menu-btn span::before,
@@ -82,7 +81,7 @@ header{
   content:"";
   position:absolute;
   left:0;
-  width:18px;
+  width:100%;
   height:2px;
   background:currentColor;
 }
@@ -94,23 +93,26 @@ header{
 
 .menu{
   position:fixed;
-  top:0;
-  right:0;
+  inset:0 0 0 auto;
+  width:65%;
+  max-width:320px;
   height:100%;
-  width:min(82vw,320px);
+
   background:var(--menu-bg);
   backdrop-filter:blur(10px);
   box-shadow:-30px 0 80px rgba(0,0,0,.35);
+
   transform:translateX(100%);
   transition:transform .3s ease;
+
+  padding:10%;
   z-index:9;
-  padding:28px 22px;
 }
 
 .menu.open{ transform:translateX(0); }
 
 .menu h2{
-  margin:0 0 12px;
+  margin:0 0 10%;
   font-size:14px;
   letter-spacing:.14em;
   text-transform:uppercase;
@@ -132,27 +134,35 @@ header{
   border-bottom-color:currentColor;
 }
 
-/* ───────── Main ───────── */
+/* ───────── Main / Alignment Core ───────── */
 
 main{
-  flex:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:80px 16px 24px;
+  position:relative;
+  width:100%;
+  height:100%;
+}
+
+.center{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  text-align:center;
 }
 
 .logo{
-  width:clamp(220px,82vw,460px);
+  width:82%;
+  max-width:460px;
   height:auto;
   display:block;
+  margin:0 auto;
 }
 
 /* ───────── Footer ───────── */
 
 footer{
   text-align:center;
-  padding:18px 16px 22px;
+  padding-top:5%;
   font-size:10px;
   letter-spacing:.12em;
   color:var(--muted);
@@ -185,68 +195,70 @@ footer{
 </nav>
 
 <main>
-<a href="https://www.omnicorpusa.com" aria-label="OmniCorp Home">
+  <div class="center">
+    <a href="https://www.omnicorpusa.com" aria-label="OmniCorp Home">
 
-<!-- ===== OMNI LOGO ===== -->
-<svg
-  class="logo"
-  viewBox="0 0 460 150"
-  xmlns="http://www.w3.org/2000/svg"
-  role="img"
-  aria-label="OMNI logo"
->
-  <defs>
-    <linearGradient id="auroraHue" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#00f5ff"/>
-      <stop offset="30%" stop-color="#7cff00"/>
-      <stop offset="60%" stop-color="#ff00e5"/>
-      <stop offset="85%" stop-color="#ffaa00"/>
-      <stop offset="100%" stop-color="#00f5ff"/>
-    </linearGradient>
+      <!-- ===== OMNI LOGO ===== -->
+      <svg
+        class="logo"
+        viewBox="0 0 460 150"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-label="OMNI logo"
+      >
+        <defs>
+          <linearGradient id="auroraHue" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#00f5ff"/>
+            <stop offset="30%" stop-color="#7cff00"/>
+            <stop offset="60%" stop-color="#ff00e5"/>
+            <stop offset="85%" stop-color="#ffaa00"/>
+            <stop offset="100%" stop-color="#00f5ff"/>
+          </linearGradient>
 
-    <filter id="outerGlow" x="-35%" y="-35%" width="170%" height="170%">
-      <feGaussianBlur stdDeviation="3.2"/>
-      <feColorMatrix
-        type="matrix"
-        values="
-          1 0 0 0 0
-          0 1 0 0 0
-          0 0 1 0 0
-          0 0 0 var(--halo-opacity) 0"/>
-    </filter>
-  </defs>
+          <filter id="outerGlow" x="-35%" y="-35%" width="170%" height="170%">
+            <feGaussianBlur stdDeviation="3.2"/>
+            <feColorMatrix
+              type="matrix"
+              values="
+                1 0 0 0 0
+                0 1 0 0 0
+                0 0 1 0 0
+                0 0 0 var(--halo-opacity) 0"/>
+          </filter>
+        </defs>
 
-  <!-- Rainbow halo -->
-  <g fill="none"
-     stroke="url(#auroraHue)"
-     stroke-width="4"
-     opacity="var(--halo-opacity)"
-     filter="url(#outerGlow)"
-     stroke-linejoin="round">
-    <path d="M70 26 C36 26 24 54 24 75 C24 96 36 124 70 124 C104 124 116 96 116 75 C116 54 104 26 70 26 Z"/>
-    <path d="M132 124 V26 H156 L184 92 L212 26 H236 V124 H214 V66 L184 118 L154 66 V124 Z"/>
-    <path d="M246 124 V26 H270 L312 94 V26 H334 V124 H310 L268 56 V124 Z"/>
-    <rect x="350" y="26" width="30" height="98" rx="9"/>
-  </g>
+        <!-- Rainbow halo -->
+        <g fill="none"
+           stroke="url(#auroraHue)"
+           stroke-width="4"
+           opacity="var(--halo-opacity)"
+           filter="url(#outerGlow)"
+           stroke-linejoin="round">
+          <path d="M70 26 C36 26 24 54 24 75 C24 96 36 124 70 124 C104 124 116 96 116 75 C116 54 104 26 70 26 Z"/>
+          <path d="M132 124 V26 H156 L184 92 L212 26 H236 V124 H214 V66 L184 118 L154 66 V124 Z"/>
+          <path d="M246 124 V26 H270 L312 94 V26 H334 V124 H310 L268 56 V124 Z"/>
+          <rect x="350" y="26" width="30" height="98" rx="9"/>
+        </g>
 
-  <!-- Solid white logo -->
-  <g fill="#ffffff">
-    <path d="M70 26 C36 26 24 54 24 75 C24 96 36 124 70 124 C104 124 116 96 116 75 C116 54 104 26 70 26 Z
-             M70 50 C88 50 92 62 92 75 C92 88 88 100 70 100 C52 100 48 88 48 75 C48 62 52 50 70 50 Z"/>
-    <path d="M132 124 V26 H156 L184 92 L212 26 H236 V124 H214 V66 L184 118 L154 66 V124 Z"/>
-    <path d="M246 124 V26 H270 L312 94 V26 H334 V124 H310 L268 56 V124 Z"/>
-    <rect x="350" y="26" width="30" height="98" rx="9"/>
-  </g>
+        <!-- Solid white logo -->
+        <g fill="#ffffff">
+          <path d="M70 26 C36 26 24 54 24 75 C24 96 36 124 70 124 C104 124 116 96 116 75 C116 54 104 26 70 26 Z
+                   M70 50 C88 50 92 62 92 75 C92 88 88 100 70 100 C52 100 48 88 48 75 C48 62 52 50 70 50 Z"/>
+          <path d="M132 124 V26 H156 L184 92 L212 26 H236 V124 H214 V66 L184 118 L154 66 V124 Z"/>
+          <path d="M246 124 V26 H270 L312 94 V26 H334 V124 H310 L268 56 V124 Z"/>
+          <rect x="350" y="26" width="30" height="98" rx="9"/>
+        </g>
 
-  <!-- Trademark -->
-  <text x="392" y="46" font-size="16" fill="#ffffff" opacity="0.6"
-        font-family="system-ui,-apple-system,BlinkMacSystemFont,Arial,sans-serif">
-    ™
-  </text>
-</svg>
-<!-- ===== END LOGO ===== -->
+        <!-- Trademark -->
+        <text x="392" y="46" font-size="16" fill="#ffffff" opacity="0.6"
+              font-family="system-ui,-apple-system,BlinkMacSystemFont,Arial,sans-serif">
+          ™
+        </text>
+      </svg>
+      <!-- ===== END LOGO ===== -->
 
-</a>
+    </a>
+  </div>
 </main>
 
 <footer>
