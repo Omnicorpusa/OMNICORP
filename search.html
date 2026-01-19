@@ -12,7 +12,6 @@
   --muted:rgba(11,11,13,.55);
   --line:rgba(11,11,13,.18);
 }
-
 @media (prefers-color-scheme: dark){
   :root{
     --bg:#000000;
@@ -20,12 +19,9 @@
     --muted:rgba(255,255,255,.55);
     --line:rgba(255,255,255,.18);
   }
-  html{ color-scheme:dark; }
 }
-
 *{ box-sizing:border-box; }
 html,body{ height:100%; margin:0; }
-
 body{
   background:var(--bg);
   color:var(--fg);
@@ -35,15 +31,12 @@ body{
   align-items:center;
   justify-content:center;
 }
-
 .container{
   width:100%;
   max-width:640px;
   padding:40px 20px;
   text-align:center;
 }
-
-/* Search */
 .search-input{
   width:100%;
   padding:14px 18px;
@@ -53,135 +46,162 @@ body{
   color:var(--fg);
   font-size:14px;
   text-align:center;
-  outline:none;
 }
-
-.search-input::placeholder{
-  color:var(--muted);
-}
-
-.search-input:focus{
-  border-color:var(--fg);
-  box-shadow:0 0 0 1px var(--fg);
-}
-
-/* Output */
 .status{
   margin-top:26px;
   font-size:12px;
   letter-spacing:.06em;
   color:var(--muted);
+  min-height:18px;
 }
+.status.active{ color:var(--fg); }
 </style>
 </head>
 
 <body>
 
 <div class="container">
-
-  <form method="get" action="search.html">
-    <input
-      id="query"
+  <form id="searchForm">
+    <input id="query"
       class="search-input"
       type="search"
-      name="q"
       placeholder="SEARCH OMNI"
       autocomplete="off"
-      autofocus
-    />
+      autofocus/>
   </form>
-
-  <div class="status" id="status"></div>
-
+  <div class="status" id="status">OMNI LISTENING</div>
 </div>
 
 <script>
-/* ───────── OMNI BRAIN v2 ───────── */
+/* ─────────────────────────────
+   OMNI BRAIN v4 — Shared Intelligence
+───────────────────────────── */
 
-const OMNI_BRAIN_DEFAULT = {
-  meta:{
-    created:Date.now(),
-    version:2,
-    totalSearches:0
-  },
-  concepts:{},
-  presence:{ lastSearch:null }
+const CHANNEL = new BroadcastChannel("omni-brain");
+const HALF_LIFE = 1000 * 60 * 60 * 6;
+
+/* ───── Brain ───── */
+
+const DEFAULT = {
+  meta:{ version:4, created:Date.now(), searches:0 },
+  state:{ attention:.5, confidence:.5, last:null },
+  concepts:{} // label → { weight,count,lastSeen,links:{} }
 };
 
-function loadBrain(){
+const load = () => {
   try{
     const b = JSON.parse(localStorage.getItem("omni_brain"));
-    if(b && typeof b === "object") return b;
-  }catch(e){}
-  return structuredClone(OMNI_BRAIN_DEFAULT);
-}
+    if(b?.meta?.version >= 4) return b;
+  }catch{}
+  return structuredClone(DEFAULT);
+};
 
-function saveBrain(brain){
-  localStorage.setItem("omni_brain", JSON.stringify(brain));
-}
+const save = b =>
+  localStorage.setItem("omni_brain", JSON.stringify(b));
 
-function normalize(text){
-  return text.toLowerCase().trim()
-    .replace(/[^\w\s]/g,"")
-    .replace(/\s+/g," ");
-}
+const normalize = t =>
+  t.toLowerCase().trim().replace(/[^\w\s]/g,"").replace(/\s+/g," ");
 
-function reinforce(brain, label){
-  const now = Date.now();
-
-  if(!brain.concepts[label]){
-    brain.concepts[label] = {
-      label,
-      count:0,
-      weight:0.25,
-      firstSeen:now,
-      lastSeen:now
-    };
-  }
-
-  const c = brain.concepts[label];
-  c.count++;
-  c.weight = Math.min(1, c.weight + 0.15 * (1 - c.weight));
-  c.lastSeen = now;
-}
+/* ───── Learning ───── */
 
 function decay(brain){
   const now = Date.now();
-  const HALF_LIFE = 1000 * 60 * 60 * 6;
-
-  Object.values(brain.concepts).forEach(c=>{
-    const age = now - c.lastSeen;
-    c.weight *= Math.exp(-age / HALF_LIFE);
-    if(c.weight < 0.05) delete brain.concepts[c.label];
-  });
+  for(const k in brain.concepts){
+    const c = brain.concepts[k];
+    c.weight *= Math.exp(-(now - c.lastSeen) / HALF_LIFE);
+    if(c.weight < .05) delete brain.concepts[k];
+  }
 }
 
-/* ───────── Init ───────── */
+function reinforce(brain,label){
+  const now = Date.now();
+  const c = brain.concepts[label] ||= {
+    label, weight:.25, count:0, lastSeen:now, links:{}
+  };
 
-const brain = loadBrain();
+  c.count++;
+  c.weight = Math.min(1, c.weight + .2 * (1 - c.weight));
+  c.lastSeen = now;
+
+  if(brain.state.last && brain.state.last !== label){
+    const p = brain.concepts[brain.state.last];
+    p.links[label] = (p.links[label]||0) + .15;
+    c.links[brain.state.last] = (c.links[brain.state.last]||0) + .15;
+  }
+
+  brain.state.last = label;
+}
+
+/* ───── Inference ───── */
+
+function infer(brain){
+  return Object.values(brain.concepts)
+    .sort((a,b)=>{
+      const sa = a.weight + Object.values(a.links).reduce((s,v)=>s+v,0);
+      const sb = b.weight + Object.values(b.links).reduce((s,v)=>s+v,0);
+      return sb - sa;
+    })
+    .slice(0,3)
+    .map(c=>c.label.toUpperCase());
+}
+
+/* ───── Messaging ───── */
+
+function send(type,payload){
+  const msg = { source:"omni-search", type, payload };
+  CHANNEL.postMessage(msg);
+  if(window.opener) window.opener.postMessage(msg,"*");
+}
+
+/* ───── Init ───── */
+
+const brain = load();
 decay(brain);
-
-const params = new URLSearchParams(window.location.search);
-const q = params.get("q");
 
 const input = document.getElementById("query");
 const status = document.getElementById("status");
+const form = document.getElementById("searchForm");
 
-if(q){
-  const concept = normalize(q);
-  input.value = q;
+/* ───── Receive Intent from Index ───── */
 
-  brain.meta.totalSearches++;
-  brain.presence.lastSearch = Date.now();
+window.addEventListener("message",e=>{
+  const m = e.data;
+  if(m?.source === "omni-index" && m.type === "intent"){
+    input.value = m.payload.value;
+    status.textContent = `INTENT · ${m.payload.value.toUpperCase()}`;
+    status.classList.add("active");
+  }
+});
 
-  reinforce(brain, concept);
-  saveBrain(brain);
+/* ───── Typing ───── */
 
-  status.textContent =
-    `CONCEPT ACTIVE · ${concept.toUpperCase()}`;
-}else{
-  status.textContent = "ENTER A QUERY";
-}
+input.addEventListener("input",e=>{
+  const v = normalize(e.target.value);
+  if(!v){
+    status.textContent = "OMNI IDLE";
+    return;
+  }
+  status.textContent = `INTENT · ${v.toUpperCase()}`;
+  send("intent",{ value:v });
+});
+
+/* ───── Commit ───── */
+
+form.addEventListener("submit",e=>{
+  e.preventDefault();
+  const intent = normalize(input.value);
+  if(!intent) return;
+
+  brain.meta.searches++;
+  reinforce(brain,intent);
+  save(brain);
+
+  const top = infer(brain);
+  status.textContent = `ACTIVE · ${top.join(" · ")}`;
+  status.classList.add("active");
+
+  send("summary",{ top });
+});
 </script>
 
 </body>
