@@ -143,18 +143,43 @@ footer{
 <!-- ───────── OMNI LOGO ───────── -->
 <svg class="logo" viewBox="0 0 460 150" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="auroraHue" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#00f5ff"/>
-      <stop offset="30%" stop-color="#7cff00"/>
-      <stop offset="60%" stop-color="#ff00e5"/>
-      <stop offset="85%" stop-color="#ffaa00"/>
-      <stop offset="100%" stop-color="#00f5ff"/>
-    </linearGradient>
-    <filter id="outerGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="6"/>
-    </filter>
-  </defs>
+  <!-- Aurora gradient with subtle drift -->
+  <linearGradient
+    id="auroraHue"
+    x1="-100%"
+    y1="0%"
+    x2="100%"
+    y2="0%"
+    gradientUnits="userSpaceOnUse"
+  >
+    <stop offset="0%"   stop-color="#00f5ff"/>
+    <stop offset="30%"  stop-color="#7cff00"/>
+    <stop offset="60%"  stop-color="#ff00e5"/>
+    <stop offset="85%"  stop-color="#ffaa00"/>
+    <stop offset="100%" stop-color="#00f5ff"/>
 
+    <!-- Drift animation -->
+    <animate
+      attributeName="x1"
+      from="-100%"
+      to="0%"
+      dur="18s"
+      repeatCount="indefinite"
+    />
+    <animate
+      attributeName="x2"
+      from="100%"
+      to="200%"
+      dur="18s"
+      repeatCount="indefinite"
+    />
+  </linearGradient>
+
+  <!-- Outer glow -->
+  <filter id="outerGlow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="6"/>
+  </filter>
+</defs>
   <g fill="none" stroke="url(#auroraHue)" stroke-width="4.5"
      opacity=".65" filter="url(#outerGlow)">
     <path d="M70 26 C36 26 24 54 24 75 C24 96 36 124 70 124 C104 124 116 96 116 75 C116 54 104 26 70 26 Z"/>
