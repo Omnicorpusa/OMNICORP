@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>m</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<style>
+:root{
+  --bg:#ffffff;
+  --fg:#0b0b0d;
+  --muted:rgba(11,11,13,.45);
+  --line:rgba(11,11,13,.1);
+
+  --paper:#f6f7f8;
+  --paper-border:rgba(11,11,13,.06);
+
+  --accent:hsl(210 90% 56%);
+  --accent-soft:hsla(210,90%,56%,.14);
+
+  --green:hsl(150 70% 45%);
+  --yellow:hsl(45 90% 55%);
+
+  --radius:16px;
+  --pad:16px;
+  --max:720px;
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#000;
+    --fg:#fff;
+    --muted:rgba(255,255,255,.45);
+    --line:rgba(255,255,255,.12);
+    --paper:#0c0d10;
+    --paper-border:rgba(255,255,255,.08);
+    --accent:hsl(210 90% 62%);
+    --accent-soft:hsla(210,90%,62%,.18);
+  }
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+
+body{
+  background:var(--bg);
+  color:var(--fg);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,
+    "Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  display:flex;
+  justify-content:center;
+}
+
+.app{
+  width:100%;
+  max-width:var(--max);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ───────── HEADER ───────── */
+
+header{
+  padding:22px 16px 18px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  width:40px;
+  height:40px;
+  color:var(--accent);
+}
+
+.presence{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--yellow);
+}
+
+/* ───────── FEED ───────── */
+
+.feed{
+  flex:1;
+  padding:20px 0 120px;
+}
+
+.post{
+  margin:0 16px 14px;
+  padding:var(--pad);
+  background:var(--paper);
+  border-radius:var(--radius);
+  animation:fade .18s ease;
+}
+
+.post.old{opacity:.55}
+
+@keyframes fade{
+  from{opacity:0;transform:translateY(3px)}
+  to{opacity:1;transform:none}
+}
+
+.post time{
+  font-size:11px;
+  color:var(--muted);
+}
+
+.post p{
+  margin:8px 0 10px;
+  font-size:15px;
+  line-height:1.55;
+  white-space:pre-wrap;
+}
+
+.actions{
+  font-size:12px;
+  display:flex;
+  gap:16px;
+  color:var(--muted);
+}
+
+.actions span{cursor:pointer}
+.actions span:hover{color:var(--accent)}
+
+.thread{
+  margin-top:10px;
+  padding-left:12px;
+  border-left:2px solid var(--accent-soft);
+}
+
+/* inline reply */
+.reply-box{
+  margin-top:8px;
+}
+
+.reply-box textarea{
+  width:100%;
+  resize:none;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px 12px;
+  font-size:14px;
+  background:var(--paper);
+  color:var(--fg);
+}
+
+/* ───────── COMPOSER ───────── */
+
+.composer{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  max-width:var(--max);
+  background:var(--bg);
+  border-top:1px solid var(--line);
+  padding:12px 16px 16px;
+}
+
+textarea{
+  width:100%;
+  min-height:56px;
+  resize:none;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px 14px;
+  font-size:15px;
+  background:var(--paper);
+  color:var(--fg);
+}
+
+textarea:focus{
+  outline:none;
+  border-color:var(--accent);
+  box-shadow:0 0 0 2px var(--accent-soft);
+}
+
+.meta{
+  margin-top:6px;
+  display:flex;
+  justify-content:space-between;
+  font-size:11px;
+  color:var(--muted);
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 64 64">
+      <path d="M16 42 c0-14 16-14 16 0 v14 M32 42 c0-14 16-14 16 0"
+        fill="none" stroke="currentColor" stroke-width="6"
+        stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <div class="presence">
+    <div class="dot" id="dot"></div>
+    <span id="state">connecting</span>
+  </div>
+</header>
+
+<section id="feed" class="feed"></section>
+
+<div class="composer">
+  <textarea id="input" placeholder="Write."></textarea>
+  <div class="meta">
+    <span id="stats">0 words</span>
+    <span>⌘⏎</span>
+  </div>
+</div>
+
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBQQSRRgOKWoBPNpchHpjplFMsfD9ouaXQ",
+  authDomain: "omni-7a0b1.firebaseapp.com",
+  databaseURL: "https://omni-7a0b1-default-rtdb.firebaseio.com",
+  projectId: "omni-7a0b1",
+  messagingSenderId: "751532283934",
+  appId: "1:751532283934:web:ef4aa7fba99f7e0926f60f"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+/* identity */
+const userId =
+  localStorage.m_uid ||= "m_" + Math.random().toString(36).slice(2,8);
+
+const color =
+  localStorage.m_color ||= `hsl(${Math.random()*360} 60% 55%)`;
+
+const postsRef = db.ref("posts");
+const presenceRef = db.ref("presence/" + userId);
+const typingRef = db.ref("typing/" + userId);
+
+const input = document.getElementById("input");
+const feed = document.getElementById("feed");
+const dot = document.getElementById("dot");
+const stateEl = document.getElementById("state");
+
+const now=()=>Date.now();
+const words=t=>t.trim()?t.trim().split(/\s+/).length:0;
+const timeAgo=t=>{
+  const s=(now()-t)/1000;
+  if(s<60)return"now";
+  if(s<3600)return Math.floor(s/60)+"m";
+  if(s<86400)return Math.floor(s/3600)+"h";
+  return new Date(t).toLocaleDateString();
+};
+
+/* presence */
+presenceRef.set({time:now()});
+presenceRef.onDisconnect().remove();
+
+db.ref("presence").on("value", snap=>{
+  const users=snap.val()||{};
+  const count=Object.keys(users).length;
+  stateEl.textContent =
+    count>1?`${count} here`:"alone";
+  dot.style.background =
+    count>1?"var(--green)":"var(--yellow)";
+});
+
+/* typing */
+let typingTimer;
+input.addEventListener("input",()=>{
+  typingRef.set(true);
+  clearTimeout(typingTimer);
+  typingTimer=setTimeout(()=>typingRef.remove(),1500);
+  localStorage.m_draft=input.value;
+  document.getElementById("stats").textContent =
+    `${words(input.value)} words`;
+});
+
+db.ref("typing").on("value", snap=>{
+  const t=snap.val()||{};
+  const others=Object.keys(t).filter(id=>id!==userId);
+  if(others.length){
+    stateEl.textContent="someone typing";
+    dot.style.background="var(--accent)";
+  }
+});
+
+/* submit */
+input.value=localStorage.m_draft||"";
+
+input.addEventListener("keydown",e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key==="Enter"){
+    e.preventDefault();
+    post(input.value);
+  }
+});
+
+function post(text,parent=null){
+  if(!text.trim())return;
+  postsRef.push({
+    text,
+    parent,
+    time:now(),
+    color
+  });
+  input.value="";
+  localStorage.m_draft="";
+}
+
+/* reactions */
+function react(id){
+  db.ref("reactions/"+id).transaction(n=>(n||0)+1);
+}
+
+/* feed */
+postsRef.limitToLast(200).on("value",snap=>{
+  const data=snap.val()||{};
+  const posts=Object.entries(data)
+    .map(([id,p])=>({...p,id}))
+    .sort((a,b)=>b.time-a.time);
+  render(posts);
+});
+
+function render(posts){
+  feed.innerHTML="";
+  posts.filter(p=>!p.parent)
+    .forEach(p=>renderPost(p,posts,feed));
+}
+
+function renderPost(p,all,container){
+  const age=(now()-p.time)/60000;
+  const el=document.createElement("div");
+  el.className="post"+(age>120?" old":"");
+  el.style.borderLeft=`3px solid ${p.color}`;
+  el.innerHTML=`
+    <time>${timeAgo(p.time)}</time>
+    <p>${p.text}</p>
+    <div class="actions">
+      <span onclick="openReply('${p.id}',this)">reply</span>
+      <span onclick="react('${p.id}')">+1</span>
+    </div>
+  `;
+  container.appendChild(el);
+
+  all.filter(c=>c.parent===p.id)
+    .forEach(c=>{
+      const t=document.createElement("div");
+      t.className="thread";
+      renderPost(c,all,t);
+      container.appendChild(t);
+    });
+}
+
+function openReply(id,el){
+  if(el.parentNode.querySelector(".reply-box"))return;
+  const box=document.createElement("div");
+  box.className="reply-box";
+  box.innerHTML=`<textarea rows="2" placeholder="Reply…"></textarea>`;
+  el.parentNode.appendChild(box);
+  const ta=box.querySelector("textarea");
+  ta.focus();
+  ta.onkeydown=e=>{
+    if(e.key==="Enter"&&!e.shiftKey){
+      e.preventDefault();
+      post(ta.value,id);
+      box.remove();
+    }
+  };
+}
+</script>
+</body>
+</html>
