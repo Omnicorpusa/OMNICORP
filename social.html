@@ -189,6 +189,21 @@ textarea:focus{
   font-size:11px;
   color:var(--muted);
 }
+
+button#send{
+  border:1px solid var(--line);
+  background:var(--paper);
+  color:var(--fg);
+  padding:6px 12px;
+  border-radius:10px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+button#send:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+}
 </style>
 </head>
 
@@ -197,21 +212,17 @@ textarea:focus{
 
 <header>
 
-  <!-- CLICKABLE OMNI LOGO -->
   <a
     href="https://www.omnicorpusa.com"
     class="logo-link"
     aria-label="OMNI — back to main site"
   >
-    <!-- (OMNI SVG unchanged) -->
-
 <?xml version="1.0" encoding="UTF-8"?>
 <svg
   xmlns="http://www.w3.org/2000/svg"
   viewBox="0 0 64 64"
   role="img"
   aria-label="m logo">
-
   <path
     d="
       M16 42
@@ -226,10 +237,6 @@ textarea:focus{
     stroke-linecap="round"
     stroke-linejoin="round"/>
 </svg>
-
-
-    <!-- SVG omitted here for brevity in explanation, but KEEP EXACT SVG FROM PREVIOUS MESSAGE -->
-    <!-- ⬆️ DO NOT MODIFY SVG CONTENT -->
   </a>
 
   <div class="presence">
@@ -244,13 +251,14 @@ textarea:focus{
   <textarea id="input" placeholder="Write."></textarea>
   <div class="meta">
     <span id="stats">0 words</span>
-    <span>⌘⏎</span>
+    <div style="display:flex;gap:12px;align-items:center">
+      <span>⌘⏎</span>
+      <button id="send">Send</button>
+    </div>
   </div>
 </div>
 
 </div>
-
-<!-- ───────── FIREBASE (RECONNECTED) ───────── -->
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -268,7 +276,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-/* identity */
 const userId =
   localStorage.m_uid ||= "m_" + Math.random().toString(36).slice(2,8);
 
@@ -283,6 +290,7 @@ const input = document.getElementById("input");
 const feed = document.getElementById("feed");
 const dot = document.getElementById("dot");
 const stateEl = document.getElementById("state");
+const sendBtn = document.getElementById("send");
 
 const now=()=>Date.now();
 const words=t=>t.trim()?t.trim().split(/\s+/).length:0;
@@ -294,7 +302,6 @@ const timeAgo=t=>{
   return new Date(t).toLocaleDateString();
 };
 
-/* presence */
 presenceRef.set({time:now()});
 presenceRef.onDisconnect().remove();
 
@@ -305,7 +312,6 @@ db.ref("presence").on("value", snap=>{
   dot.style.background = count>1?"var(--green)":"var(--yellow)";
 });
 
-/* typing */
 let typingTimer;
 input.addEventListener("input",()=>{
   typingRef.set(true);
@@ -325,7 +331,6 @@ db.ref("typing").on("value", snap=>{
   }
 });
 
-/* submit */
 input.value=localStorage.m_draft||"";
 
 input.addEventListener("keydown",e=>{
@@ -335,6 +340,10 @@ input.addEventListener("keydown",e=>{
   }
 });
 
+sendBtn.addEventListener("click",()=>{
+  post(input.value);
+});
+
 function post(text,parent=null){
   if(!text.trim())return;
   postsRef.push({ text, parent, time:now(), color });
@@ -342,7 +351,6 @@ function post(text,parent=null){
   localStorage.m_draft="";
 }
 
-/* feed */
 postsRef.limitToLast(200).on("value",snap=>{
   const data=snap.val()||{};
   const posts=Object.entries(data)
