@@ -197,7 +197,58 @@ footer{
 
 <script>
 document.getElementById("year").textContent = new Date().getFullYear();
+
+const input = document.getElementById("searchInput");
+const results = document.getElementById("results");
+
+function readBrain(){
+  try{
+    return JSON.parse(localStorage.getItem("omni_brain_summary"));
+  }catch{
+    return null;
+  }
+}
+
+function updateResults(){
+  const s=readBrain();
+  if(!s||!s.top?.length){
+    results.textContent="OMNI IDLE";
+    results.classList.remove("active");
+    return;
+  }
+  results.textContent=`ACTIVE · ${s.top.join(" · ")}`;
+  results.classList.add("active");
+}
+
+/* Input intent preview */
+input.addEventListener("input",e=>{
+  const v=e.target.value.trim();
+  if(v){
+    results.textContent=`INTENT · ${v.toUpperCase()}`;
+    results.classList.add("active");
+  }else{
+    updateResults();
+  }
+});
+
+/* Submit reinforces brain */
+document.getElementById("searchForm").addEventListener("submit",e=>{
+  const v=input.value.trim();
+  if(v){
+    try{
+      const brain=JSON.parse(localStorage.getItem("omni_brain_core"));
+      if(brain){
+        brain.last.search=v.toLowerCase();
+        localStorage.setItem("omni_brain_core",JSON.stringify(brain));
+      }
+    }catch{}
+  }
+});
+
+updateResults();
+setInterval(updateResults,1500);
 </script>
+
 
 </body>
 </html>
