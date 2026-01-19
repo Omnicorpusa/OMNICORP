@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
 <style>
-/* --- UNCHANGED STYLES --- */
 :root{
   --bg:#ffffff;
   --fg:#0b0b0d;
@@ -177,12 +176,12 @@ const supabase = window.supabase.createClient(
   "sb_publishable_ObcAyL8IIArKAXUC0m1cSA_xcC6qg0j"
 );
 
-/* AUTH REQUIRED */
+/* ───────── AUTH ───────── */
 const { data:auth } = await supabase.auth.getSession();
 if(!auth.session) location.replace("/");
 const user = auth.session.user;
 
-/* ELEMENTS */
+/* ───────── ELEMENTS ───────── */
 const input = document.getElementById("input");
 const feed = document.getElementById("feed");
 const dot = document.getElementById("dot");
@@ -190,7 +189,7 @@ const stateEl = document.getElementById("state");
 const sendBtn = document.getElementById("send");
 const stats = document.getElementById("stats");
 
-/* UTILS */
+/* ───────── HELPERS ───────── */
 const words=t=>t.trim()?t.trim().split(/\s+/).length:0;
 const timeAgo=t=>{
   const s=(Date.now()-new Date(t))/1000;
@@ -200,21 +199,50 @@ const timeAgo=t=>{
   return new Date(t).toLocaleDateString();
 };
 
-/* PRESENCE */
-setInterval(()=>{
-  supabase.from("presence").upsert({
+/* ───────── PRESENCE (FIXED) ───────── */
+async function updatePresenceUI(){
+  const cutoff = new Date(Date.now() - 15000).toISOString();
+
+  const { data } = await supabase
+    .from("presence")
+    .select("user_id")
+    .gt("last_seen", cutoff);
+
+  if(!data) return;
+
+  const count = data.length;
+
+  if(count > 1){
+    stateEl.textContent = `${count} here`;
+    dot.style.background = "var(--green)";
+  }else if(count === 1){
+    stateEl.textContent = "alone";
+    dot.style.background = "var(--yellow)";
+  }else{
+    stateEl.textContent = "offline";
+    dot.style.background = "var(--muted)";
+  }
+}
+
+setInterval(async()=>{
+  await supabase.from("presence").upsert({
     user_id:user.id,
     last_seen:new Date().toISOString()
   });
+  updatePresenceUI();
 },5000);
 
 supabase.channel("presence")
-  .on("postgres_changes",{event:"*",schema:"public",table:"presence"},()=>{
-    stateEl.textContent="online";
-    dot.style.background="var(--green)";
-  }).subscribe();
+  .on(
+    "postgres_changes",
+    {event:"*",schema:"public",table:"presence"},
+    updatePresenceUI
+  )
+  .subscribe();
 
-/* POSTS */
+updatePresenceUI();
+
+/* ───────── POSTS ───────── */
 async function load(){
   const { data } = await supabase
     .from("posts")
