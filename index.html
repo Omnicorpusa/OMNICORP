@@ -10,6 +10,7 @@
   --bg:#ffffff;
   --fg:#0b0b0d;
   --muted:rgba(11,11,13,.55);
+  --line:rgba(11,11,13,.18);
 }
 
 @media (prefers-color-scheme: dark){
@@ -17,6 +18,7 @@
     --bg:#000000;
     --fg:#ffffff;
     --muted:rgba(255,255,255,.55);
+    --line:rgba(255,255,255,.18);
   }
   html{ color-scheme:dark; }
 }
@@ -34,10 +36,19 @@ body{
   overflow:hidden;
 }
 
+/* ───────── Main ───────── */
+
 main{
   display:flex;
   align-items:center;
   justify-content:center;
+}
+
+.center{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:18px;
 }
 
 .title-link{
@@ -51,6 +62,37 @@ main{
   display:block;
 }
 
+/* ───────── Search ───────── */
+
+.search-wrap{
+  width:260px;
+}
+
+.search-input{
+  width:100%;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:transparent;
+  color:var(--fg);
+  font-size:12px;
+  text-align:center;
+  letter-spacing:.08em;
+  outline:none;
+  transition:border-color .25s, box-shadow .25s;
+}
+
+.search-input::placeholder{
+  color:var(--muted);
+}
+
+.search-input:focus{
+  border-color:var(--fg);
+  box-shadow:0 0 0 1px var(--fg);
+}
+
+/* ───────── Footer ───────── */
+
 footer{
   text-align:center;
   padding:12px 20px;
@@ -58,6 +100,8 @@ footer{
   letter-spacing:.06em;
   color:var(--muted);
 }
+
+/* ───────── Help ───────── */
 
 .help-btn{
   position:fixed;
@@ -130,63 +174,65 @@ footer{
 <body>
 
 <main>
-<a href="/" class="title-link" aria-label="OmniCorp Home">
+  <div class="center">
 
-<!-- ───────── OMNI LOGO ───────── -->
-<svg class="logo" viewBox="0 0 460 150" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="auroraHue" x1="-100%" y1="0%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#00f5ff"/>
-      <stop offset="30%" stop-color="#7cff00"/>
-      <stop offset="60%" stop-color="#ff00e5"/>
-      <stop offset="85%" stop-color="#ffaa00"/>
-      <stop offset="100%" stop-color="#00f5ff"/>
-      <animate attributeName="x1" from="-100%" to="0%" dur="18s" repeatCount="indefinite"/>
-      <animate attributeName="x2" from="100%" to="200%" dur="18s" repeatCount="indefinite"/>
-    </linearGradient>
+    <a href="/" class="title-link" aria-label="OmniCorp Home">
 
-    <filter id="outerGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="6">
-        <animate attributeName="stdDeviation" values="5;7;5" dur="14s" repeatCount="indefinite"/>
-      </feGaussianBlur>
-    </filter>
-  </defs>
+      <!-- ───────── OMNI LOGO ───────── -->
+      <svg class="logo" viewBox="0 0 460 150" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="auroraHue" x1="-100%" y1="0%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#00f5ff"/>
+            <stop offset="30%" stop-color="#7cff00"/>
+            <stop offset="60%" stop-color="#ff00e5"/>
+            <stop offset="85%" stop-color="#ffaa00"/>
+            <stop offset="100%" stop-color="#00f5ff"/>
+            <animate attributeName="x1" from="-100%" to="0%" dur="18s" repeatCount="indefinite"/>
+            <animate attributeName="x2" from="100%" to="200%" dur="18s" repeatCount="indefinite"/>
+          </linearGradient>
 
-  <!-- ENERGY STROKE -->
-  <g fill="none" stroke="url(#auroraHue)" stroke-width="4.2"
-     stroke-linecap="round" stroke-linejoin="round"
-     filter="url(#outerGlow)">
-    <animate attributeName="opacity" values="0.61;0.66;0.61" dur="16s" repeatCount="indefinite"/>
+          <filter id="outerGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6">
+              <animate attributeName="stdDeviation" values="5;7;5" dur="14s" repeatCount="indefinite"/>
+            </feGaussianBlur>
+          </filter>
+        </defs>
 
-    <path d="M70 24 C40 24 26 50 26 75 C26 100 40 126 70 126 C100 126 114 100 114 75 C114 50 100 24 70 24 Z"/>
-    <path d="M132 124 V38 Q132 26 144 26 H148 L184 92 L220 26 H224 Q236 26 236 38 V124"/>
-    <path d="M246 124 V38 Q246 26 258 26 H262 L318 114 Q322 124 332 124 V38 Q332 26 320 26"/>
-    <rect x="350" y="26" width="30" height="98" rx="15"/>
-  </g>
+        <g fill="none" stroke="url(#auroraHue)" stroke-width="4.2"
+           stroke-linecap="round" stroke-linejoin="round"
+           filter="url(#outerGlow)">
+          <path d="M70 24 C40 24 26 50 26 75 C26 100 40 126 70 126 C100 126 114 100 114 75 C114 50 100 24 70 24 Z"/>
+          <path d="M132 124 V38 Q132 26 144 26 H148 L184 92 L220 26 H224 Q236 26 236 38 V124"/>
+          <path d="M246 124 V38 Q246 26 258 26 H262 L318 114 Q322 124 332 124 V38 Q332 26 320 26"/>
+          <rect x="350" y="26" width="30" height="98" rx="15"/>
+        </g>
 
-  <!-- CORE FORMS -->
-  <g fill="currentColor">
-    <!-- O shell -->
-    <path d="M70 24 C40 24 26 50 26 75 C26 100 40 126 70 126 C100 126 114 100 114 75 C114 50 100 24 70 24 Z"/>
+        <g fill="currentColor">
+          <path d="M70 24 C40 24 26 50 26 75 C26 100 40 126 70 126 C100 126 114 100 114 75 C114 50 100 24 70 24 Z"/>
+          <circle cx="70" cy="75" r="22" opacity="0.92"/>
+          <path d="M132 124 V38 Q132 26 144 26 H148 L184 92 L220 26 H224 Q236 26 236 38 V124"/>
+          <path d="M246 124 V38 Q246 26 258 26 H262 L318 114 Q322 124 332 124 V38 Q332 26 320 26"/>
+          <rect x="350" y="26" width="30" height="98" rx="15"/>
+        </g>
 
-    <!-- FILLED CORE -->
-    <circle cx="70" cy="75" r="22" opacity="0.92"/>
+        <text x="392" y="47" font-size="16" opacity="0.5">™</text>
+      </svg>
+    </a>
 
-    <!-- Presence ring -->
-    <circle cx="70" cy="75" r="34" fill="none" stroke="currentColor" stroke-width="1" opacity="0.06">
-      <animateTransform attributeName="transform" type="rotate"
-        from="0 70 75" to="360 70 75" dur="60s" repeatCount="indefinite"/>
-    </circle>
+    <!-- ───────── SEARCH BAR ───────── -->
+    <div class="search-wrap">
+      <form action="search.html" method="get">
+        <input
+          class="search-input"
+          type="search"
+          name="q"
+          placeholder="SEARCH OMNI"
+          aria-label="Search Omni"
+        />
+      </form>
+    </div>
 
-    <path d="M132 124 V38 Q132 26 144 26 H148 L184 92 L220 26 H224 Q236 26 236 38 V124"/>
-    <path d="M246 124 V38 Q246 26 258 26 H262 L318 114 Q322 124 332 124 V38 Q332 26 320 26"/>
-    <rect x="350" y="26" width="30" height="98" rx="15"/>
-  </g>
-
-  <text x="392" y="47" font-size="16" opacity="0.5">™</text>
-</svg>
-
-</a>
+  </div>
 </main>
 
 <footer>
