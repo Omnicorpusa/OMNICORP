@@ -2,197 +2,239 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title>Omni</title>
+<title>OMNI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
 <style>
-:root {
-    --bg: #ffffff;
-    --fg: #0b0b0d;
-    --muted: rgba(11, 11, 13, .6);
+:root{
+  /* Light mode defaults */
+  --bg:#ffffff;
+  --fg:#0b0b0d;
+  --muted:rgba(11,11,13,.55);
+  --halo-opacity:.35;
+  --hover-glow: rgba(120,180,255,.18);
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg: #0a0b0e;
-        --fg: #f2f3f5;
-        --muted: rgba(242, 243, 245, .65);
-    }
-    html { color-scheme: dark; }
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#000000;
+    --fg:#ffffff;
+    --muted:rgba(255,255,255,.55);
+    --halo-opacity:.55;
+    --hover-glow: rgba(140,190,255,.25);
+  }
+  html{ color-scheme:dark; }
 }
 
-* { box-sizing: border-box; }
+*{ box-sizing:border-box; }
+html,body{ height:100%; margin:0; }
 
-html, body {
-    height: 100%;
-    margin: 0;
+body{
+  background:var(--bg);
+  color:var(--fg);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,
+    "Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  display:grid;
+  grid-template-rows:1fr auto;
+  overflow:hidden;
 }
 
-body {
-    background: var(--bg);
-    color: var(--fg);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    display: grid;
-    place-items: center;
-    padding: 64px 20px;
+/* ───────── Main ───────── */
+
+main{
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-.container {
-    text-align: center;
-    max-width: 900px;
-    width: 100%;
+.title-link{
+  color:inherit;
+  text-decoration:none;
 }
 
-@keyframes intro {
-    from { opacity: 0; transform: translateY(4px); }
-    to   { opacity: 1; transform: translateY(0); }
+.logo{
+  width:clamp(300px,60vw,460px);
+  height:auto;
+  display:block;
 }
 
-.intro {
-    opacity: 0;
-    animation: intro 0.55s ease-out forwards;
+.title-link:hover .logo{
+  filter:drop-shadow(0 0 14px var(--hover-glow));
 }
 
-.delay-1 { animation-delay: 0.05s; }
-.delay-2 { animation-delay: 0.15s; }
-.delay-3 { animation-delay: 0.25s; }
+/* ───────── Footer ───────── */
 
-@media (prefers-reduced-motion: reduce) {
-    .intro { animation: none; opacity: 1; }
+footer{
+  text-align:center;
+  padding:14px 20px;
+  font-size:11px;
+  letter-spacing:.08em;
+  color:var(--muted);
 }
 
-.title {
-    font-size: clamp(25px, 10vw, 120px);
-    letter-spacing: -0.06em;
-    line-height: 0.95;
-    margin: 0;
-    text-transform: uppercase;
+/* ───────── Help ───────── */
+
+.help-btn{
+  position:fixed;
+  bottom:18px;
+  right:18px;
+  padding:8px 16px;
+  border-radius:999px;
+  border:1px solid currentColor;
+  background:transparent;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  cursor:pointer;
 }
 
-.title .bold { font-weight: 1000; }
-.title .light { font-weight: 250; }
-
-.email {
-    margin-top: 5px;
-    font-size: clamp(2.5px, 2.2vw, 18px);
-    color: var(--muted);
-    letter-spacing: 0.02em;
-    text-decoration: none;
+.help-btn:hover{
+  color:var(--fg);
 }
 
-.tagline {
-    margin-top: 28px;
-    font-size: 12px;
-    color: var(--muted);
-    opacity: 0.75;
-    letter-spacing: 0.04em;
-    min-height: 1em;
+/* Modal */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  backdrop-filter:blur(6px);
+  display:none;
+  align-items:center;
+  justify-content:center;
 }
 
-/* ───────── Minimal Help Button ───────── */
+.modal.active{ display:flex; }
 
-.help-btn {
-    position: fixed;
-    bottom: 18px;
-    right: 18px;
-    width: 28px;
-    height: 28px;
-    font-size: 14px;
-    background: transparent;
-    color: var(--muted);
-    border: 1px solid rgba(127,127,127,.25);
-    border-radius: 50%;
-    cursor: pointer;
-    padding: 0;
+.modal-card{
+  background:var(--bg);
+  border-radius:16px;
+  padding:26px 22px 22px;
+  width:90%;
+  max-width:260px;
+  box-shadow:0 30px 90px rgba(0,0,0,.4);
+  text-align:center;
+  position:relative;
 }
 
-.help-btn:hover {
-    color: var(--fg);
-    border-color: var(--fg);
+.modal-card p{
+  margin:0;
+  font-size:14px;
+  color:var(--muted);
 }
 
-/* ───────── Help Modal ───────── */
-
-.help-modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.35);
-    display: none;
-    place-items: center;
-    z-index: 100;
+.modal-close{
+  position:absolute;
+  top:10px;
+  right:14px;
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  font-size:18px;
+  cursor:pointer;
 }
 
-.help-modal.active {
-    display: grid;
-}
-
-.help-card {
-    background: var(--bg);
-    color: var(--fg);
-    border-radius: 14px;
-    padding: 20px 22px;
-    width: min(280px, 90vw);
-    text-align: center;
-    box-shadow: 0 20px 60px rgba(0,0,0,.25);
-    position: relative;
-}
-
-.support-email {
-    font-size: 13px;
-    color: var(--fg);
-    text-decoration: none;
-}
-
-.support-email:hover {
-    text-decoration: underline;
-}
-
-.close {
-    position: absolute;
-    top: 8px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 18px;
-    color: var(--muted);
-    cursor: pointer;
-}
+.modal-close:hover{ color:var(--fg); }
 </style>
 </head>
 
 <body>
 
-<main class="container">
-    <h1 class="title intro delay-1">
-        <span class="bold">OMNI</span><span class="light">CORP</span>
-    </h1>
+<main>
+<a href="https://www.omnicorpusa.com" class="title-link" aria-label="OmniCorp Home">
 
-    <a class="email intro delay-2" href="https://www.omnicorpusa.com" target="_blank" rel="noopener">
-        www.omnicorpusa.com
-    </a>
+<!-- ===== OMNI LOGO ===== -->
+<svg
+  class="logo"
+  viewBox="0 0 460 150"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label="OMNI logo"
+>
+  <defs>
+    <!-- Subtle rainbow halo -->
+    <linearGradient id="auroraHue" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f5ff"/>
+      <stop offset="30%" stop-color="#7cff00"/>
+      <stop offset="60%" stop-color="#ff00e5"/>
+      <stop offset="85%" stop-color="#ffaa00"/>
+      <stop offset="100%" stop-color="#00f5ff"/>
+    </linearGradient>
 
-    <div class="tagline intro delay-3"></div>
+    <!-- Outer glow only -->
+    <filter id="outerGlow" x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur stdDeviation="3"/>
+      <feColorMatrix
+        type="matrix"
+        values="
+          1 0 0 0 0
+          0 1 0 0 0
+          0 0 1 0 0
+          0 0 0 var(--halo-opacity) 0"/>
+    </filter>
+  </defs>
+
+  <!-- Rainbow edge halo -->
+  <g
+    fill="none"
+    stroke="url(#auroraHue)"
+    stroke-width="4"
+    opacity="var(--halo-opacity)"
+    filter="url(#outerGlow)"
+    stroke-linejoin="round"
+  >
+    <path d="M70 26 C36 26 24 54 24 75 C24 96 36 124 70 124 C104 124 116 96 116 75 C116 54 104 26 70 26 Z"/>
+    <path d="M132 124 V26 H156 L184 92 L212 26 H236 V124 H214 V66 L184 118 L154 66 V124 Z"/>
+    <path d="M246 124 V26 H270 L312 94 V26 H334 V124 H310 L268 56 V124 Z"/>
+    <rect x="350" y="26" width="30" height="98" rx="9"/>
+  </g>
+
+  <!-- Core letters -->
+  <g fill="currentColor">
+    <path d="M70 26 C36 26 24 54 24 75 C24 96 36 124 70 124 C104 124 116 96 116 75 C116 54 104 26 70 26 Z
+             M70 50 C88 50 92 62 92 75 C92 88 88 100 70 100 C52 100 48 88 48 75 C48 62 52 50 70 50 Z"/>
+    <path d="M132 124 V26 H156 L184 92 L212 26 H236 V124 H214 V66 L184 118 L154 66 V124 Z"/>
+    <path d="M246 124 V26 H270 L312 94 V26 H334 V124 H310 L268 56 V124 Z"/>
+    <rect x="350" y="26" width="30" height="98" rx="9"/>
+  </g>
+
+  <!-- Trademark -->
+  <text
+    x="392"
+    y="46"
+    font-size="16"
+    fill="currentColor"
+    opacity="0.55"
+    font-family="system-ui,-apple-system,BlinkMacSystemFont,Arial,sans-serif"
+  >™</text>
+</svg>
+<!-- ===== END LOGO ===== -->
+
+</a>
 </main>
 
-<button class="help-btn intro delay-3" onclick="toggleHelp()">?</button>
+<footer>
+  © <span id="year"></span> OmniCorp · All rights reserved
+</footer>
 
-<div class="help-modal" id="helpModal" aria-hidden="true">
-    <div class="help-card">
-        <button class="close" onclick="toggleHelp()">×</button>
-        <span class="support-email" href="mailto:support@omnicorpusa.com">
-            support@omnicorpusa.com
-        </span>
-    </div>
+<button class="help-btn" id="helpOpen">Help</button>
+
+<div class="modal" id="helpModal" role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <button class="modal-close" id="helpClose">×</button>
+    <p>help@omnicorpusa.com</p>
+  </div>
 </div>
 
 <script>
-function toggleHelp() {
-    const modal = document.getElementById('helpModal');
-    const open = modal.classList.toggle('active');
-    modal.setAttribute('aria-hidden', !open);
-}
+  document.getElementById("year").textContent = new Date().getFullYear();
+  const modal = document.getElementById("helpModal");
+  document.getElementById("helpOpen").onclick = () => modal.classList.add("active");
+  document.getElementById("helpClose").onclick = () => modal.classList.remove("active");
+  modal.onclick = e => e.target === modal && modal.classList.remove("active");
 </script>
 
 </body>
-</html >
+</html>
