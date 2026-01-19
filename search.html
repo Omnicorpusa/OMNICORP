@@ -10,7 +10,7 @@
   --bg:#ffffff;
   --fg:#0b0b0d;
   --muted:rgba(11,11,13,.55);
-  --line:rgba(11,11,13,.12);
+  --line:rgba(11,11,13,.18);
 }
 
 @media (prefers-color-scheme: dark){
@@ -18,7 +18,7 @@
     --bg:#000000;
     --fg:#ffffff;
     --muted:rgba(255,255,255,.55);
-    --line:rgba(255,255,255,.12);
+    --line:rgba(255,255,255,.18);
   }
   html{ color-scheme:dark; }
 }
@@ -36,30 +36,14 @@ body{
   justify-content:center;
 }
 
-/* ───────── Layout ───────── */
-
 .container{
   width:100%;
-  max-width:680px;
+  max-width:640px;
   padding:40px 20px;
   text-align:center;
-  transform:scale(0.5); /* 50% rule */
-}
-
-/* Title */
-h1{
-  font-size:26px;
-  letter-spacing:.22em;
-  margin:0 0 28px;
-  font-weight:600;
-  opacity:.9;
 }
 
 /* Search */
-form{
-  width:100%;
-}
-
 .search-input{
   width:100%;
   padding:14px 18px;
@@ -67,15 +51,13 @@ form{
   border:1px solid var(--line);
   background:transparent;
   color:var(--fg);
-  font-size:15px;
+  font-size:14px;
   text-align:center;
   outline:none;
-  transition:border-color .25s, box-shadow .25s;
 }
 
 .search-input::placeholder{
   color:var(--muted);
-  letter-spacing:.08em;
 }
 
 .search-input:focus{
@@ -83,22 +65,12 @@ form{
   box-shadow:0 0 0 1px var(--fg);
 }
 
-/* Result placeholder */
-.results{
-  margin-top:28px;
+/* Output */
+.status{
+  margin-top:26px;
   font-size:12px;
+  letter-spacing:.06em;
   color:var(--muted);
-  letter-spacing:.04em;
-  min-height:18px;
-}
-
-/* Footer hint */
-.hint{
-  margin-top:36px;
-  font-size:9px;
-  letter-spacing:.12em;
-  color:var(--muted);
-  opacity:.6;
 }
 </style>
 </head>
@@ -107,51 +79,109 @@ form{
 
 <div class="container">
 
-  <h1>OMNI</h1>
-
   <form method="get" action="search.html">
     <input
+      id="query"
       class="search-input"
       type="search"
       name="q"
-      id="query"
       placeholder="SEARCH OMNI"
       autocomplete="off"
       autofocus
     />
   </form>
 
-  <div class="results" id="results"></div>
-
-  <div class="hint">
-    INDEX · PRESENCE · BRAIN (PENDING)
-  </div>
+  <div class="status" id="status"></div>
 
 </div>
 
 <script>
-/* ───────── Minimal Query Awareness ───────── */
+/* ───────── OMNI BRAIN v2 ───────── */
+
+const OMNI_BRAIN_DEFAULT = {
+  meta:{
+    created:Date.now(),
+    version:2,
+    totalSearches:0
+  },
+  concepts:{},
+  presence:{ lastSearch:null }
+};
+
+function loadBrain(){
+  try{
+    const b = JSON.parse(localStorage.getItem("omni_brain"));
+    if(b && typeof b === "object") return b;
+  }catch(e){}
+  return structuredClone(OMNI_BRAIN_DEFAULT);
+}
+
+function saveBrain(brain){
+  localStorage.setItem("omni_brain", JSON.stringify(brain));
+}
+
+function normalize(text){
+  return text.toLowerCase().trim()
+    .replace(/[^\w\s]/g,"")
+    .replace(/\s+/g," ");
+}
+
+function reinforce(brain, label){
+  const now = Date.now();
+
+  if(!brain.concepts[label]){
+    brain.concepts[label] = {
+      label,
+      count:0,
+      weight:0.25,
+      firstSeen:now,
+      lastSeen:now
+    };
+  }
+
+  const c = brain.concepts[label];
+  c.count++;
+  c.weight = Math.min(1, c.weight + 0.15 * (1 - c.weight));
+  c.lastSeen = now;
+}
+
+function decay(brain){
+  const now = Date.now();
+  const HALF_LIFE = 1000 * 60 * 60 * 6;
+
+  Object.values(brain.concepts).forEach(c=>{
+    const age = now - c.lastSeen;
+    c.weight *= Math.exp(-age / HALF_LIFE);
+    if(c.weight < 0.05) delete brain.concepts[c.label];
+  });
+}
+
+/* ───────── Init ───────── */
+
+const brain = loadBrain();
+decay(brain);
 
 const params = new URLSearchParams(window.location.search);
 const q = params.get("q");
 
-const results = document.getElementById("results");
 const input = document.getElementById("query");
+const status = document.getElementById("status");
 
 if(q){
+  const concept = normalize(q);
   input.value = q;
-  results.textContent = `QUERY RECEIVED: “${q}”`;
-}else{
-  results.textContent = "ENTER A QUERY";
-}
 
-/*
-Future hooks:
-- Omni Brain index
-- Presence-based results
-- Memory recall
-- Semantic drift
-*/
+  brain.meta.totalSearches++;
+  brain.presence.lastSearch = Date.now();
+
+  reinforce(brain, concept);
+  saveBrain(brain);
+
+  status.textContent =
+    `CONCEPT ACTIVE · ${concept.toUpperCase()}`;
+}else{
+  status.textContent = "ENTER A QUERY";
+}
 </script>
 
 </body>
