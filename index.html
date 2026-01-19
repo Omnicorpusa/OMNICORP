@@ -17,6 +17,8 @@ body {
   place-items: center;
   background: #000;
   overflow: hidden;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 /* Main OMNI logo */
@@ -25,6 +27,80 @@ svg.omni {
   height: auto;
   max-height: 90vh;
   color: #ffffff;
+}
+
+/* ───────── SIGN IN / IDENTITY BUTTON ───────── */
+
+#signin-btn{
+  position:fixed;
+  top:28px;
+  right:28px;
+  background:transparent;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.25);
+  padding:10px 14px;
+  border-radius:999px;
+  font-size:14px;
+  cursor:pointer;
+  opacity:.55;
+  transition:opacity .3s ease, border-color .3s ease;
+}
+
+#signin-btn:hover{
+  opacity:1;
+  border-color:rgba(255,255,255,.55);
+}
+
+/* ───────── SIGN IN MODAL ───────── */
+
+#signin-modal{
+  position:fixed;
+  inset:0;
+  display:grid;
+  place-items:center;
+  background:rgba(0,0,0,.65);
+  backdrop-filter:blur(10px);
+}
+
+.signin-card{
+  background:#000;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:18px;
+  padding:28px;
+  width:260px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.signin-card h2{
+  margin:0;
+  font-size:18px;
+  font-weight:500;
+}
+
+.signin-card input{
+  background:#000;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.25);
+  padding:10px 12px;
+  border-radius:12px;
+  outline:none;
+}
+
+.signin-card button{
+  background:#fff;
+  color:#000;
+  border:none;
+  padding:10px;
+  border-radius:12px;
+  cursor:pointer;
+}
+
+.signin-card p{
+  font-size:13px;
+  opacity:.75;
+  margin:0;
 }
 
 /* ───────── SOCIAL LINK ───────── */
@@ -52,6 +128,19 @@ svg.omni {
 
 <body>
 
+<!-- ───────── IDENTITY BUTTON ───────── -->
+<button id="signin-btn">Sign in</button>
+
+<!-- ───────── SIGN IN MODAL ───────── -->
+<div id="signin-modal" hidden>
+  <div class="signin-card">
+    <h2>Sign in</h2>
+    <input id="email-input" type="email" placeholder="you@email.com">
+    <button id="send-link">Send magic link</button>
+    <p id="status"></p>
+  </div>
+</div>
+
 <!-- ───────── OMNI LOGO ───────── -->
 <svg
   class="omni"
@@ -61,11 +150,7 @@ svg.omni {
   aria-label="OMNI logo">
 
   <defs>
-    <linearGradient
-      id="auroraHue"
-      x1="-120%" y1="0%"
-      x2="120%"  y2="0%"
-      gradientUnits="userSpaceOnUse">
+    <linearGradient id="auroraHue" x1="-120%" y1="0%" x2="120%" y2="0%" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#00f5ff"/>
       <stop offset="28%" stop-color="#7cff00"/>
       <stop offset="58%" stop-color="#ff00e5"/>
@@ -89,60 +174,102 @@ svg.omni {
     </filter>
   </defs>
 
-  <!-- 50% rule group -->
   <g transform="translate(100 37.5) scale(0.5)">
-
-    <!-- Energy stroke -->
-    <g
-      fill="none"
-      stroke="url(#auroraHue)"
-      stroke-width="4"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      filter="url(#outerGlow)">
-      <animate attributeName="opacity"
-        values="0.58;0.66;0.58"
-        dur="22s"
-        repeatCount="indefinite"/>
-
+    <g fill="none" stroke="url(#auroraHue)" stroke-width="4"
+       stroke-linecap="round" stroke-linejoin="round" filter="url(#outerGlow)">
       <path d="M70 22 C44 22 22 44 22 75 C22 106 44 128 70 128 C96 128 118 106 118 75 C118 44 96 22 70 22 Z"/>
       <path d="M132 124 V38 Q132 26 144 26 H148 L184 92 L220 26 H224 Q236 26 236 38 V124"/>
       <path d="M246 124 V38 Q246 26 258 26 H262 L318 114 Q322 124 332 124 V38 Q332 26 320 26"/>
       <rect x="350" y="26" width="30" height="98" rx="15"/>
     </g>
 
-    <!-- Core -->
     <g fill="currentColor">
       <path d="M70 22 C44 22 22 44 22 75 C22 106 44 128 70 128 C96 128 118 106 118 75 C118 44 96 22 70 22 Z"/>
       <circle cx="70" cy="75" r="22" opacity="0.9" filter="url(#innerGlow)"/>
-      <circle cx="70" cy="75" r="34" fill="none" stroke="currentColor" stroke-width="1" opacity="0.055">
-        <animateTransform type="rotate" from="0 70 75" to="360 70 75" dur="90s" repeatCount="indefinite"/>
-      </circle>
+      <circle cx="70" cy="75" r="34" fill="none" stroke="currentColor"
+              stroke-width="1" opacity="0.055"/>
       <path d="M132 124 V38 Q132 26 144 26 H148 L184 92 L220 26 H224 Q236 26 236 38 V124"/>
       <path d="M246 124 V38 Q246 26 258 26 H262 L318 114 Q322 124 332 124 V38 Q332 26 320 26"/>
       <rect x="350" y="26" width="30" height="98" rx="15"/>
     </g>
-
   </g>
 </svg>
 
-<!-- ───────── SOCIAL LINK (BLUE m) ───────── -->
+<!-- ───────── SOCIAL LINK ───────── -->
 <a class="social-link" href="social.html" aria-label="Open social">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-    <path d="
-      M16 42
-      c0-14 16-14 16 0
-      v14
-      M32 42
-      c0-14 16-14 16 0
-    "
-      fill="none"
-      stroke="currentColor"
-      stroke-width="6"
-      stroke-linecap="round"
-      stroke-linejoin="round"/>
+    <path d="M16 42 c0-14 16-14 16 0 v14 M32 42 c0-14 16-14 16 0"
+      fill="none" stroke="currentColor" stroke-width="6"
+      stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
 </a>
+
+<!-- ───────── SUPABASE MAGIC LINK + LOGOUT ───────── -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+const supabase = window.supabase.createClient(
+  "https://stywczdwpclejhxovpod.supabase.co",
+  "sb_publishable_ObcAyL8IIArKAXUC0m1cSA_xcC6qg0j"
+);
+
+const modal = document.getElementById("signin-modal");
+const btn = document.getElementById("signin-btn");
+const status = document.getElementById("status");
+
+let signedIn = false;
+
+// Button behavior: sign in OR log out
+btn.onclick = async () => {
+  if (!signedIn) {
+    modal.hidden = false;
+  } else {
+    const ok = confirm("Sign out of OMNI?");
+    if (!ok) return;
+    await supabase.auth.signOut();
+  }
+};
+
+// Send magic link
+document.getElementById("send-link").onclick = async () => {
+  const email = document.getElementById("email-input").value;
+  if (!email) return;
+
+  status.textContent = "Sending magic link…";
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: window.location.origin }
+  });
+
+  status.textContent = error
+    ? "Error sending email"
+    : "Check your email ✨";
+};
+
+// Auth state listener
+supabase.auth.onAuthStateChange((_event, session) => {
+  if (session) {
+    signedIn = true;
+    btn.textContent = session.user.email;
+    btn.style.opacity = "0.85";
+    modal.hidden = true;
+  } else {
+    signedIn = false;
+    btn.textContent = "Sign in";
+    btn.style.opacity = ".55";
+  }
+});
+
+// Restore session
+(async () => {
+  const { data } = await supabase.auth.getSession();
+  if (data.session) {
+    signedIn = true;
+    btn.textContent = data.session.user.email;
+    btn.style.opacity = "0.85";
+  }
+})();
+</script>
 
 </body>
 </html>
