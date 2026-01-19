@@ -88,6 +88,23 @@ main{
   box-shadow:0 0 0 1px var(--fg);
 }
 
+/* Results */
+.results{
+  width:320px;
+  min-height:22px;
+  margin-top:6px;
+  font-size:11px;
+  letter-spacing:.06em;
+  color:var(--muted);
+  text-align:center;
+  opacity:.8;
+  transition:opacity .3s;
+}
+
+.results.active{
+  opacity:1;
+}
+
 /* Footer */
 footer{
   text-align:center;
@@ -106,7 +123,7 @@ footer{
 
     <a href="/" class="title-link" aria-label="Omni Home">
 
-<!-- ───────── OMNI LOGO (RETAINED DESIGN) ───────── -->
+<!-- ───────── OMNI LOGO (UNCHANGED) ───────── -->
 <svg
   class="logo"
   xmlns="http://www.w3.org/2000/svg"
@@ -116,10 +133,10 @@ footer{
 >
   <defs>
     <linearGradient id="auroraHue" x1="-120%" y1="0%" x2="120%" y2="0%" gradientUnits="userSpaceOnUse">
-      <stop offset="0%"   stop-color="#00f5ff"/>
-      <stop offset="28%"  stop-color="#7cff00"/>
-      <stop offset="58%"  stop-color="#ff00e5"/>
-      <stop offset="82%"  stop-color="#ffaa00"/>
+      <stop offset="0%" stop-color="#00f5ff"/>
+      <stop offset="28%" stop-color="#7cff00"/>
+      <stop offset="58%" stop-color="#ff00e5"/>
+      <stop offset="82%" stop-color="#ffaa00"/>
       <stop offset="100%" stop-color="#00f5ff"/>
       <animate attributeName="x1" from="-120%" to="0%" dur="26s" repeatCount="indefinite"/>
       <animate attributeName="x2" from="120%" to="240%" dur="26s" repeatCount="indefinite"/>
@@ -140,7 +157,6 @@ footer{
     </filter>
   </defs>
 
-  <!-- ENERGY STROKE -->
   <g fill="none" stroke="url(#auroraHue)" stroke-width="4"
      stroke-linecap="round" stroke-linejoin="round"
      filter="url(#outerGlow)">
@@ -155,7 +171,6 @@ footer{
     <rect x="350" y="26" width="30" height="98" rx="15"/>
   </g>
 
-  <!-- CORE FORMS -->
   <g fill="currentColor">
     <path d="M70 22 C44 22 22 44 22 75 C22 106 44 128 70 128 C96 128 118 106 118 75 C118 44 96 22 70 22 Z"/>
     <circle cx="70" cy="75" r="22" opacity="0.9" filter="url(#innerGlow)"/>
@@ -171,14 +186,14 @@ footer{
   <text x="392" y="44" font-size="14" opacity="0.45"
     font-family="system-ui,-apple-system,BlinkMacSystemFont,Arial,sans-serif">™</text>
 </svg>
-<!-- ───────────────────────────── -->
 
     </a>
 
     <!-- SEARCH -->
     <div class="search-wrap">
-      <form action="search.html" method="get">
+      <form action="search.html" method="get" id="searchForm">
         <input
+          id="searchInput"
           class="search-input"
           type="search"
           name="q"
@@ -186,6 +201,11 @@ footer{
           aria-label="Search Omni"
         />
       </form>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results" id="results">
+      OMNI IDLE
     </div>
 
   </div>
@@ -210,21 +230,21 @@ function readBrain(){
 }
 
 function updateResults(){
-  const s=readBrain();
-  if(!s||!s.top?.length){
-    results.textContent="OMNI IDLE";
+  const s = readBrain();
+  if(!s || !s.top || !s.top.length){
+    results.textContent = "OMNI IDLE";
     results.classList.remove("active");
     return;
   }
-  results.textContent=`ACTIVE · ${s.top.join(" · ")}`;
+  results.textContent = `ACTIVE · ${s.top.join(" · ")}`;
   results.classList.add("active");
 }
 
-/* Input intent preview */
-input.addEventListener("input",e=>{
-  const v=e.target.value.trim();
+/* Live intent preview */
+input.addEventListener("input", e=>{
+  const v = e.target.value.trim();
   if(v){
-    results.textContent=`INTENT · ${v.toUpperCase()}`;
+    results.textContent = `INTENT · ${v.toUpperCase()}`;
     results.classList.add("active");
   }else{
     updateResults();
@@ -232,23 +252,22 @@ input.addEventListener("input",e=>{
 });
 
 /* Submit reinforces brain */
-document.getElementById("searchForm").addEventListener("submit",e=>{
-  const v=input.value.trim();
+document.getElementById("searchForm").addEventListener("submit", ()=>{
+  const v = input.value.trim();
   if(v){
     try{
-      const brain=JSON.parse(localStorage.getItem("omni_brain_core"));
+      const brain = JSON.parse(localStorage.getItem("omni_brain_core"));
       if(brain){
-        brain.last.search=v.toLowerCase();
-        localStorage.setItem("omni_brain_core",JSON.stringify(brain));
+        brain.last.search = v.toLowerCase();
+        localStorage.setItem("omni_brain_core", JSON.stringify(brain));
       }
     }catch{}
   }
 });
 
 updateResults();
-setInterval(updateResults,1500);
+setInterval(updateResults, 1500);
 </script>
-
 
 </body>
 </html>
