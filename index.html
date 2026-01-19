@@ -36,8 +36,6 @@ body{
   overflow:hidden;
 }
 
-/* ───────── Main ───────── */
-
 main{
   display:flex;
   align-items:center;
@@ -62,8 +60,7 @@ main{
   display:block;
 }
 
-/* ───────── Search ───────── */
-
+/* Search */
 .search-wrap{
   width:260px;
 }
@@ -79,7 +76,6 @@ main{
   text-align:center;
   letter-spacing:.08em;
   outline:none;
-  transition:border-color .25s, box-shadow .25s;
 }
 
 .search-input::placeholder{
@@ -91,8 +87,7 @@ main{
   box-shadow:0 0 0 1px var(--fg);
 }
 
-/* ───────── Footer ───────── */
-
+/* Footer */
 footer{
   text-align:center;
   padding:12px 20px;
@@ -100,74 +95,6 @@ footer{
   letter-spacing:.06em;
   color:var(--muted);
 }
-
-/* ───────── Help ───────── */
-
-.help-btn{
-  position:fixed;
-  bottom:16px;
-  right:16px;
-  padding:5px 10px;
-  border-radius:999px;
-  border:1px solid currentColor;
-  background:transparent;
-  color:var(--muted);
-  font-size:9px;
-  font-weight:600;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  cursor:pointer;
-  z-index:10;
-  opacity:.7;
-}
-
-.help-btn:hover{
-  opacity:1;
-  color:var(--fg);
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.5);
-  backdrop-filter:blur(6px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:30;
-}
-
-.modal.active{ display:flex; }
-
-.modal-card{
-  background:var(--bg);
-  border-radius:14px;
-  padding:22px 20px 20px;
-  width:90%;
-  max-width:240px;
-  box-shadow:0 30px 90px rgba(0,0,0,.4);
-  text-align:center;
-  position:relative;
-}
-
-.modal-card p{
-  margin:0;
-  font-size:13px;
-  color:var(--muted);
-}
-
-.modal-close{
-  position:absolute;
-  top:8px;
-  right:12px;
-  border:none;
-  background:transparent;
-  color:var(--muted);
-  font-size:16px;
-  cursor:pointer;
-}
-
-.modal-close:hover{ color:var(--fg); }
 </style>
 </head>
 
@@ -176,12 +103,12 @@ footer{
 <main>
   <div class="center">
 
-    <a href="/" class="title-link" aria-label="OmniCorp Home">
+    <a href="/" class="title-link" aria-label="Omni Home">
 
-      <!-- ───────── OMNI LOGO ───────── -->
+      <!-- OMNI LOGO -->
       <svg class="logo" viewBox="0 0 460 150" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="auroraHue" x1="-100%" y1="0%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse">
+          <linearGradient id="auroraHue" x1="-100%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stop-color="#00f5ff"/>
             <stop offset="30%" stop-color="#7cff00"/>
             <stop offset="60%" stop-color="#ff00e5"/>
@@ -190,36 +117,24 @@ footer{
             <animate attributeName="x1" from="-100%" to="0%" dur="18s" repeatCount="indefinite"/>
             <animate attributeName="x2" from="100%" to="200%" dur="18s" repeatCount="indefinite"/>
           </linearGradient>
-
-          <filter id="outerGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="6">
-              <animate attributeName="stdDeviation" values="5;7;5" dur="14s" repeatCount="indefinite"/>
-            </feGaussianBlur>
-          </filter>
         </defs>
 
-        <g fill="none" stroke="url(#auroraHue)" stroke-width="4.2"
-           stroke-linecap="round" stroke-linejoin="round"
-           filter="url(#outerGlow)">
+        <g fill="none" stroke="url(#auroraHue)" stroke-width="4.2" stroke-linecap="round">
           <path d="M70 24 C40 24 26 50 26 75 C26 100 40 126 70 126 C100 126 114 100 114 75 C114 50 100 24 70 24 Z"/>
-          <path d="M132 124 V38 Q132 26 144 26 H148 L184 92 L220 26 H224 Q236 26 236 38 V124"/>
-          <path d="M246 124 V38 Q246 26 258 26 H262 L318 114 Q322 124 332 124 V38 Q332 26 320 26"/>
+          <path d="M132 124 V38 L184 92 L236 38 V124"/>
+          <path d="M246 124 V38 L318 114 V38"/>
           <rect x="350" y="26" width="30" height="98" rx="15"/>
         </g>
 
         <g fill="currentColor">
-          <path d="M70 24 C40 24 26 50 26 75 C26 100 40 126 70 126 C100 126 114 100 114 75 C114 50 100 24 70 24 Z"/>
-          <circle cx="70" cy="75" r="22" opacity="0.92"/>
-          <path d="M132 124 V38 Q132 26 144 26 H148 L184 92 L220 26 H224 Q236 26 236 38 V124"/>
-          <path d="M246 124 V38 Q246 26 258 26 H262 L318 114 Q322 124 332 124 V38 Q332 26 320 26"/>
-          <rect x="350" y="26" width="30" height="98" rx="15"/>
+          <circle cx="70" cy="75" r="22"/>
         </g>
 
         <text x="392" y="47" font-size="16" opacity="0.5">™</text>
       </svg>
     </a>
 
-    <!-- ───────── SEARCH BAR ───────── -->
+    <!-- SEARCH ENTRY -->
     <div class="search-wrap">
       <form action="search.html" method="get">
         <input
@@ -239,21 +154,8 @@ footer{
   © <span id="year"></span> Omni · All rights reserved
 </footer>
 
-<button class="help-btn" id="helpOpen">Help</button>
-
-<div class="modal" id="helpModal">
-  <div class="modal-card">
-    <button class="modal-close" id="helpClose">×</button>
-    <p>help@omnicorpusa.com</p>
-  </div>
-</div>
-
 <script>
 document.getElementById("year").textContent = new Date().getFullYear();
-const helpModal = document.getElementById("helpModal");
-helpOpen.onclick = () => helpModal.classList.add("active");
-helpClose.onclick = () => helpModal.classList.remove("active");
-helpModal.onclick = e => e.target === helpModal && helpModal.classList.remove("active");
 </script>
 
 </body>
