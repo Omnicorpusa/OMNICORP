@@ -12,7 +12,6 @@
   --muted:rgba(11,11,13,.45);
   --line:rgba(11,11,13,.1);
   --paper:#f6f7f8;
-  --paper-border:rgba(11,11,13,.06);
   --accent:hsl(210 90% 56%);
   --accent-soft:hsla(210,90%,56%,.14);
   --green:hsl(150 70% 45%);
@@ -21,6 +20,7 @@
   --pad:16px;
   --max:720px;
 }
+
 @media (prefers-color-scheme: dark){
   :root{
     --bg:#000;
@@ -28,13 +28,14 @@
     --muted:rgba(255,255,255,.45);
     --line:rgba(255,255,255,.12);
     --paper:#0c0d10;
-    --paper-border:rgba(255,255,255,.08);
     --accent:hsl(210 90% 62%);
     --accent-soft:hsla(210,90%,62%,.18);
   }
 }
+
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
+
 body{
   background:var(--bg);
   color:var(--fg);
@@ -43,6 +44,9 @@ body{
   display:flex;
   justify-content:center;
 }
+
+/* ───────── App ───────── */
+
 .app{
   width:100%;
   max-width:var(--max);
@@ -50,6 +54,8 @@ body{
   display:flex;
   flex-direction:column;
 }
+
+/* Header */
 header{
   padding:22px 16px 18px;
   border-bottom:1px solid var(--line);
@@ -57,6 +63,7 @@ header{
   align-items:center;
   justify-content:space-between;
 }
+
 .logo-link{
   display:flex;
   align-items:center;
@@ -64,7 +71,9 @@ header{
   color:var(--accent);
   text-decoration:none;
 }
+
 .logo-link svg{height:100%}
+
 .presence{
   display:flex;
   align-items:center;
@@ -72,29 +81,39 @@ header{
   font-size:12px;
   color:var(--muted);
 }
+
 .dot{
   width:8px;
   height:8px;
   border-radius:50%;
-  background:var(--yellow);
+  background:var(--muted);
 }
-.feed{flex:1;padding:20px 0 120px}
+
+/* Feed */
+.feed{
+  flex:1;
+  padding:20px 0 120px;
+}
+
 .post{
   margin:0 16px 14px;
   padding:var(--pad);
   background:var(--paper);
   border-radius:var(--radius);
 }
-.post time{font-size:11px;color:var(--muted)}
-.post p{margin:8px 0 10px;font-size:15px;line-height:1.55}
-.actions{font-size:12px;display:flex;gap:16px;color:var(--muted)}
-.actions span{cursor:pointer}
-.actions span:hover{color:var(--accent)}
-.thread{
-  margin-top:10px;
-  padding-left:12px;
-  border-left:2px solid var(--accent-soft);
+
+.post time{
+  font-size:11px;
+  color:var(--muted);
 }
+
+.post p{
+  margin:8px 0 10px;
+  font-size:15px;
+  line-height:1.55;
+}
+
+/* Composer */
 .composer{
   position:fixed;
   bottom:0;
@@ -104,6 +123,7 @@ header{
   border-top:1px solid var(--line);
   padding:12px 16px 16px;
 }
+
 textarea{
   width:100%;
   min-height:56px;
@@ -115,11 +135,13 @@ textarea{
   background:var(--paper);
   color:var(--fg);
 }
+
 textarea:focus{
   outline:none;
   border-color:var(--accent);
   box-shadow:0 0 0 2px var(--accent-soft);
 }
+
 .meta{
   margin-top:6px;
   display:flex;
@@ -127,7 +149,8 @@ textarea:focus{
   font-size:11px;
   color:var(--muted);
 }
-button#send{
+
+button{
   border:1px solid var(--line);
   background:var(--paper);
   color:var(--fg);
@@ -136,176 +159,211 @@ button#send{
   font-size:12px;
   cursor:pointer;
 }
-button#send:hover{border-color:var(--accent);color:var(--accent)}
+
+button:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+}
+
+/* ───────── Auth Redesign ───────── */
+
+.auth{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:24px;
+}
+
+.auth-card{
+  width:100%;
+  max-width:360px;
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:28px 26px 30px;
+  text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+}
+
+.auth-logo{
+  width:40px;
+  height:40px;
+  margin:0 auto 14px;
+  color:var(--accent);
+}
+
+.auth-logo svg{
+  width:100%;
+  height:100%;
+}
+
+.auth h1{
+  margin:6px 0 6px;
+  font-size:20px;
+  font-weight:600;
+}
+
+.auth-sub{
+  margin:0 0 18px;
+  font-size:13px;
+  line-height:1.45;
+  color:var(--muted);
+}
+
+.auth input{
+  width:100%;
+  padding:12px 14px;
+  font-size:14px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:var(--bg);
+  color:var(--fg);
+  margin-bottom:14px;
+}
+
+.auth input:focus{
+  outline:none;
+  border-color:var(--accent);
+  box-shadow:0 0 0 2px var(--accent-soft);
+}
+
+.auth button.primary{
+  width:100%;
+  padding:10px 14px;
+  border-radius:14px;
+  border:1px solid var(--accent);
+  background:var(--accent);
+  color:#fff;
+  font-size:14px;
+  font-weight:500;
+}
+
+.auth-note{
+  margin-top:12px;
+  font-size:11px;
+  color:var(--muted);
+}
 </style>
 </head>
 
 <body>
-<div class="app">
 
-<header>
-  <a href="https://www.omnicorpusa.com" class="logo-link">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-      <path d="M16 42c0-14 16-14 16 0v14 M32 42c0-14 16-14 16 0"
-        fill="none" stroke="currentColor" stroke-width="6"
-        stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </a>
-  <div class="presence">
-    <div class="dot" id="dot"></div>
-    <span id="state">connecting</span>
-  </div>
-</header>
+<!-- APP -->
+<div class="app" id="app" hidden>
+  <header>
+    <a class="logo-link">
+      <svg viewBox="0 0 64 64">
+        <path d="M16 42c0-14 16-14 16 0v14 M32 42c0-14 16-14 16 0"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="6"
+          stroke-linecap="round"/>
+      </svg>
+    </a>
+    <div class="presence">
+      <div class="dot" id="dot"></div>
+      <span id="state">online</span>
+    </div>
+  </header>
 
-<section id="feed" class="feed"></section>
+  <section id="feed" class="feed"></section>
 
-<div class="composer">
-  <textarea id="input" placeholder="Write."></textarea>
-  <div class="meta">
-    <span id="stats">0 words</span>
-    <button id="send">Send</button>
+  <div class="composer">
+    <textarea id="input" placeholder="Write."></textarea>
+    <div class="meta">
+      <span id="stats">0 words</span>
+      <button id="send">Send</button>
+    </div>
   </div>
 </div>
 
+<!-- AUTH -->
+<div class="auth" id="auth">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg viewBox="0 0 64 64">
+        <path d="M16 42c0-14 16-14 16 0v14 M32 42c0-14 16-14 16 0"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="6"
+          stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <h1>Sign in</h1>
+    <p class="auth-sub">
+      A quiet place to write.<br/>
+      We’ll email you a magic link.
+    </p>
+
+    <input id="email" type="email" placeholder="email@example.com"/>
+    <button id="login" class="primary">Send magic link</button>
+    <p class="auth-note">No password. No spam.</p>
+  </div>
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<script>
+
+<script type="module">
 const supabase = window.supabase.createClient(
   "https://stywczdwpclejhxovpod.supabase.co",
   "sb_publishable_ObcAyL8IIArKAXUC0m1cSA_xcC6qg0j"
 );
 
-/* ───────── AUTH ───────── */
-const { data:auth } = await supabase.auth.getSession();
-if(!auth.session) location.replace("/");
-const user = auth.session.user;
+const app = document.getElementById("app");
+const authUI = document.getElementById("auth");
 
-/* ───────── ELEMENTS ───────── */
-const input = document.getElementById("input");
 const feed = document.getElementById("feed");
-const dot = document.getElementById("dot");
-const stateEl = document.getElementById("state");
-const sendBtn = document.getElementById("send");
+const input = document.getElementById("input");
+const send = document.getElementById("send");
 const stats = document.getElementById("stats");
 
-/* ───────── HELPERS ───────── */
-const words=t=>t.trim()?t.trim().split(/\s+/).length:0;
-const timeAgo=t=>{
-  const s=(Date.now()-new Date(t))/1000;
-  if(s<60)return"now";
-  if(s<3600)return Math.floor(s/60)+"m";
-  if(s<86400)return Math.floor(s/3600)+"h";
-  return new Date(t).toLocaleDateString();
-};
+const words = t => t.trim() ? t.trim().split(/\s+/).length : 0;
+input.oninput = () => stats.textContent = `${words(input.value)} words`;
 
-/* ───────── PRESENCE (FIXED) ───────── */
-async function updatePresenceUI(){
-  const cutoff = new Date(Date.now() - 15000).toISOString();
+const { data } = await supabase.auth.getSession();
+const user = data.session?.user;
 
-  const { data } = await supabase
-    .from("presence")
-    .select("user_id")
-    .gt("last_seen", cutoff);
+if (!user) {
+  authUI.hidden = false;
+  app.hidden = true;
 
-  if(!data) return;
-
-  const count = data.length;
-
-  if(count > 1){
-    stateEl.textContent = `${count} here`;
-    dot.style.background = "var(--green)";
-  }else if(count === 1){
-    stateEl.textContent = "alone";
-    dot.style.background = "var(--yellow)";
-  }else{
-    stateEl.textContent = "offline";
-    dot.style.background = "var(--muted)";
-  }
+  document.getElementById("login").onclick = async () => {
+    const email = document.getElementById("email").value;
+    if (!email) return;
+    await supabase.auth.signInWithOtp({ email });
+    alert("Check your email for the magic link.");
+  };
+} else {
+  authUI.hidden = true;
+  app.hidden = false;
 }
 
-setInterval(async()=>{
-  await supabase.from("presence").upsert({
-    user_id:user.id,
-    last_seen:new Date().toISOString()
-  });
-  updatePresenceUI();
-},5000);
-
-supabase.channel("presence")
-  .on(
-    "postgres_changes",
-    {event:"*",schema:"public",table:"presence"},
-    updatePresenceUI
-  )
-  .subscribe();
-
-updatePresenceUI();
-
-/* ───────── POSTS ───────── */
+/* Posts (minimal) */
 async function load(){
   const { data } = await supabase
     .from("posts")
     .select("*")
-    .order("created_at",{ascending:false})
-    .limit(200);
-  render(data||[]);
+    .order("created_at",{ascending:false});
+  feed.innerHTML="";
+  (data||[]).forEach(p=>{
+    const el=document.createElement("div");
+    el.className="post";
+    el.innerHTML=`<time>now</time><p>${p.content}</p>`;
+    feed.appendChild(el);
+  });
 }
 
-supabase.channel("posts")
-  .on("postgres_changes",{event:"INSERT",schema:"public",table:"posts"},load)
-  .subscribe();
-
-sendBtn.onclick=async()=>{
+send.onclick = async()=>{
   const text=input.value.trim();
-  if(!text)return;
-  await supabase.from("posts").insert({
-    user_id:user.id,
-    content:text
-  });
+  if(!text) return;
+  await supabase.from("posts").insert({ content:text, user_id:user.id });
   input.value="";
   stats.textContent="0 words";
+  load();
 };
 
-input.oninput=()=>stats.textContent=`${words(input.value)} words`;
-
-function render(posts){
-  feed.innerHTML="";
-  posts.filter(p=>!p.parent_id)
-    .forEach(p=>renderPost(p,posts,feed));
-}
-
-function renderPost(p,all,container){
-  const el=document.createElement("div");
-  el.className="post";
-  el.innerHTML=`
-    <time>${timeAgo(p.created_at)}</time>
-    <p>${p.content}</p>
-    <div class="actions">
-      <span onclick="reply('${p.id}')">reply</span>
-    </div>`;
-  container.appendChild(el);
-
-  all.filter(c=>c.parent_id===p.id)
-    .forEach(c=>{
-      const t=document.createElement("div");
-      t.className="thread";
-      renderPost(c,all,t);
-      container.appendChild(t);
-    });
-}
-
-window.reply=async(id)=>{
-  const text=prompt("Reply…");
-  if(!text)return;
-  await supabase.from("posts").insert({
-    user_id:user.id,
-    content:text,
-    parent_id:id
-  });
-};
-
-load();
+if (user) load();
 </script>
 
 </body>
