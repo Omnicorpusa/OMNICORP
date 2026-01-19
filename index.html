@@ -34,8 +34,6 @@ body{
   overflow:hidden;
 }
 
-/* ───────── Main ───────── */
-
 main{
   display:flex;
   align-items:center;
@@ -53,8 +51,6 @@ main{
   display:block;
 }
 
-/* ───────── Footer ───────── */
-
 footer{
   text-align:center;
   padding:12px 20px;
@@ -62,8 +58,6 @@ footer{
   letter-spacing:.06em;
   color:var(--muted);
 }
-
-/* ───────── Help Button (Smaller) ───────── */
 
 .help-btn{
   position:fixed;
@@ -87,8 +81,6 @@ footer{
   opacity:1;
   color:var(--fg);
 }
-
-/* ───────── Help Modal ───────── */
 
 .modal{
   position:fixed;
@@ -143,62 +135,55 @@ footer{
 <!-- ───────── OMNI LOGO ───────── -->
 <svg class="logo" viewBox="0 0 460 150" xmlns="http://www.w3.org/2000/svg">
   <defs>
-  <!-- Aurora gradient with subtle drift -->
-  <linearGradient
-    id="auroraHue"
-    x1="-100%"
-    y1="0%"
-    x2="100%"
-    y2="0%"
-    gradientUnits="userSpaceOnUse"
-  >
-    <stop offset="0%"   stop-color="#00f5ff"/>
-    <stop offset="30%"  stop-color="#7cff00"/>
-    <stop offset="60%"  stop-color="#ff00e5"/>
-    <stop offset="85%"  stop-color="#ffaa00"/>
-    <stop offset="100%" stop-color="#00f5ff"/>
+    <linearGradient id="auroraHue" x1="-100%" y1="0%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00f5ff"/>
+      <stop offset="30%" stop-color="#7cff00"/>
+      <stop offset="60%" stop-color="#ff00e5"/>
+      <stop offset="85%" stop-color="#ffaa00"/>
+      <stop offset="100%" stop-color="#00f5ff"/>
+      <animate attributeName="x1" from="-100%" to="0%" dur="18s" repeatCount="indefinite"/>
+      <animate attributeName="x2" from="100%" to="200%" dur="18s" repeatCount="indefinite"/>
+    </linearGradient>
 
-    <!-- Drift animation -->
-    <animate
-      attributeName="x1"
-      from="-100%"
-      to="0%"
-      dur="18s"
-      repeatCount="indefinite"
-    />
-    <animate
-      attributeName="x2"
-      from="100%"
-      to="200%"
-      dur="18s"
-      repeatCount="indefinite"
-    />
-  </linearGradient>
+    <filter id="outerGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6">
+        <animate attributeName="stdDeviation" values="5;7;5" dur="14s" repeatCount="indefinite"/>
+      </feGaussianBlur>
+    </filter>
+  </defs>
 
-  <!-- Outer glow -->
-  <filter id="outerGlow" x="-50%" y="-50%" width="200%" height="200%">
-    <feGaussianBlur stdDeviation="6"/>
-  </filter>
-</defs>
-  <g fill="none" stroke="url(#auroraHue)" stroke-width="4.5"
-     opacity=".65" filter="url(#outerGlow)">
-    <path d="M70 26 C36 26 24 54 24 75 C24 96 36 124 70 124 C104 124 116 96 116 75 C116 54 104 26 70 26 Z"/>
-    <path d="M132 124 V26 H156 L184 92 L212 26 H236 V124"/>
-    <path d="M246 124 V26 H270 L312 94 V26 H334 V124"/>
-    <rect x="350" y="26" width="30" height="98" rx="9"/>
+  <!-- ENERGY STROKE -->
+  <g fill="none" stroke="url(#auroraHue)" stroke-width="4.2"
+     stroke-linecap="round" stroke-linejoin="round"
+     filter="url(#outerGlow)">
+    <animate attributeName="opacity" values="0.61;0.66;0.61" dur="16s" repeatCount="indefinite"/>
+
+    <path d="M70 24 C40 24 26 50 26 75 C26 100 40 126 70 126 C100 126 114 100 114 75 C114 50 100 24 70 24 Z"/>
+    <path d="M132 124 V38 Q132 26 144 26 H148 L184 92 L220 26 H224 Q236 26 236 38 V124"/>
+    <path d="M246 124 V38 Q246 26 258 26 H262 L318 114 Q322 124 332 124 V38 Q332 26 320 26"/>
+    <rect x="350" y="26" width="30" height="98" rx="15"/>
   </g>
 
+  <!-- CORE FORMS -->
   <g fill="currentColor">
-    <path d="M70 26 C36 26 24 54 24 75 C24 96 36 124 70 124
-             C104 124 116 96 116 75 C116 54 104 26 70 26 Z
-             M70 50 C88 50 92 62 92 75 C92 88 88 100 70 100
-             C52 100 48 88 48 75 C48 62 52 50 70 50 Z"/>
-    <path d="M132 124 V26 H156 L184 92 L212 26 H236 V124"/>
-    <path d="M246 124 V26 H270 L312 94 V26 H334 V124"/>
-    <rect x="350" y="26" width="30" height="98" rx="9"/>
+    <!-- O shell -->
+    <path d="M70 24 C40 24 26 50 26 75 C26 100 40 126 70 126 C100 126 114 100 114 75 C114 50 100 24 70 24 Z"/>
+
+    <!-- FILLED CORE -->
+    <circle cx="70" cy="75" r="22" opacity="0.92"/>
+
+    <!-- Presence ring -->
+    <circle cx="70" cy="75" r="34" fill="none" stroke="currentColor" stroke-width="1" opacity="0.06">
+      <animateTransform attributeName="transform" type="rotate"
+        from="0 70 75" to="360 70 75" dur="60s" repeatCount="indefinite"/>
+    </circle>
+
+    <path d="M132 124 V38 Q132 26 144 26 H148 L184 92 L220 26 H224 Q236 26 236 38 V124"/>
+    <path d="M246 124 V38 Q246 26 258 26 H262 L318 114 Q322 124 332 124 V38 Q332 26 320 26"/>
+    <rect x="350" y="26" width="30" height="98" rx="15"/>
   </g>
 
-  <text x="392" y="46" font-size="16" fill="currentColor" opacity=".55">™</text>
+  <text x="392" y="47" font-size="16" opacity="0.5">™</text>
 </svg>
 
 </a>
@@ -210,7 +195,6 @@ footer{
 
 <button class="help-btn" id="helpOpen">Help</button>
 
-<!-- Help Modal -->
 <div class="modal" id="helpModal">
   <div class="modal-card">
     <button class="modal-close" id="helpClose">×</button>
@@ -220,12 +204,10 @@ footer{
 
 <script>
 document.getElementById("year").textContent = new Date().getFullYear();
-
 const helpModal = document.getElementById("helpModal");
 helpOpen.onclick = () => helpModal.classList.add("active");
 helpClose.onclick = () => helpModal.classList.remove("active");
-helpModal.onclick = e =>
-  e.target === helpModal && helpModal.classList.remove("active");
+helpModal.onclick = e => e.target === helpModal && helpModal.classList.remove("active");
 </script>
 
 </body>
