@@ -29,78 +29,51 @@ svg.omni {
   color: #ffffff;
 }
 
-/* ───────── SIGN IN / IDENTITY BUTTON ───────── */
+/* ───────── LOGIN BAR ───────── */
 
-#signin-btn{
+#login-bar{
   position:fixed;
   top:28px;
   right:28px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+#login-bar input{
+  background:#000;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.25);
+  padding:9px 12px;
+  border-radius:999px;
+  font-size:14px;
+  width:190px;
+  outline:none;
+}
+
+#login-btn{
   background:transparent;
   color:#fff;
   border:1px solid rgba(255,255,255,.25);
-  padding:10px 14px;
+  padding:9px 14px;
   border-radius:999px;
   font-size:14px;
   cursor:pointer;
-  opacity:.55;
-  transition:opacity .3s ease, border-color .3s ease;
+  opacity:.6;
+  transition:.3s ease;
 }
 
-#signin-btn:hover{
+#login-btn:hover{
   opacity:1;
   border-color:rgba(255,255,255,.55);
 }
 
-/* ───────── SIGN IN MODAL ───────── */
-
-#signin-modal{
+#status{
   position:fixed;
-  inset:0;
-  display:grid;
-  place-items:center;
-  background:rgba(0,0,0,.65);
-  backdrop-filter:blur(10px);
-}
-
-.signin-card{
-  background:#000;
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:18px;
-  padding:28px;
-  width:260px;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.signin-card h2{
-  margin:0;
-  font-size:18px;
-  font-weight:500;
-}
-
-.signin-card input{
-  background:#000;
-  color:#fff;
-  border:1px solid rgba(255,255,255,.25);
-  padding:10px 12px;
-  border-radius:12px;
-  outline:none;
-}
-
-.signin-card button{
-  background:#fff;
-  color:#000;
-  border:none;
-  padding:10px;
-  border-radius:12px;
-  cursor:pointer;
-}
-
-.signin-card p{
-  font-size:13px;
-  opacity:.75;
-  margin:0;
+  top:64px;
+  right:28px;
+  font-size:12px;
+  opacity:.7;
 }
 
 /* ───────── SOCIAL LINK ───────── */
@@ -128,18 +101,13 @@ svg.omni {
 
 <body>
 
-<!-- ───────── IDENTITY BUTTON ───────── -->
-<button id="signin-btn">Sign in</button>
-
-<!-- ───────── SIGN IN MODAL ───────── -->
-<div id="signin-modal" hidden>
-  <div class="signin-card">
-    <h2>Sign in</h2>
-    <input id="email-input" type="email" placeholder="you@email.com">
-    <button id="send-link">Send magic link</button>
-    <p id="status"></p>
-  </div>
+<!-- ───────── LOGIN BAR ───────── -->
+<div id="login-bar">
+  <input id="email-input" type="email" placeholder="you@email.com">
+  <button id="login-btn">Login</button>
 </div>
+
+<p id="status"></p>
 
 <!-- ───────── OMNI LOGO ───────── -->
 <svg
@@ -212,16 +180,28 @@ const supabase = window.supabase.createClient(
   "sb_publishable_ObcAyL8IIArKAXUC0m1cSA_xcC6qg0j"
 );
 
-const modal = document.getElementById("signin-modal");
-const btn = document.getElementById("signin-btn");
+const emailInput = document.getElementById("email-input");
+const btn = document.getElementById("login-btn");
 const status = document.getElementById("status");
 
 let signedIn = false;
 
-// Button behavior: sign in OR log out
+// Login / Logout button
 btn.onclick = async () => {
   if (!signedIn) {
-    modal.hidden = false;
+    const email = emailInput.value;
+    if (!email) return;
+
+    status.textContent = "Sending magic link…";
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options:{ emailRedirectTo: window.location.origin }
+    });
+
+    status.textContent = error
+      ? "Error sending email"
+      : "Check your email ✨";
   } else {
     const ok = confirm("Sign out of OMNI?");
     if (!ok) return;
@@ -229,34 +209,17 @@ btn.onclick = async () => {
   }
 };
 
-// Send magic link
-document.getElementById("send-link").onclick = async () => {
-  const email = document.getElementById("email-input").value;
-  if (!email) return;
-
-  status.textContent = "Sending magic link…";
-
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: window.location.origin }
-  });
-
-  status.textContent = error
-    ? "Error sending email"
-    : "Check your email ✨";
-};
-
-// Auth state listener
-supabase.auth.onAuthStateChange((_event, session) => {
+// Auth state updates
+supabase.auth.onAuthStateChange((_e, session) => {
   if (session) {
     signedIn = true;
+    emailInput.style.display = "none";
     btn.textContent = session.user.email;
-    btn.style.opacity = "0.85";
-    modal.hidden = true;
+    status.textContent = "";
   } else {
     signedIn = false;
-    btn.textContent = "Sign in";
-    btn.style.opacity = ".55";
+    emailInput.style.display = "";
+    btn.textContent = "Login";
   }
 });
 
@@ -265,8 +228,8 @@ supabase.auth.onAuthStateChange((_event, session) => {
   const { data } = await supabase.auth.getSession();
   if (data.session) {
     signedIn = true;
+    emailInput.style.display = "none";
     btn.textContent = data.session.user.email;
-    btn.style.opacity = "0.85";
   }
 })();
 </script>
