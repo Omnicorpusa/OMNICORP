@@ -4,179 +4,183 @@
 <meta charset="utf-8" />
 <title>OMNI · CORE</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<!-- (CSS EXACTLY AS YOU PROVIDED — UNCHANGED) -->
+
 <style>
-/* [CSS OMITTED HERE FOR BREVITY IN EXPLANATION]
-   👉 USE YOUR PROVIDED CSS BLOCK VERBATIM
-*/
+/* === YOUR ORIGINAL CORE CSS (UNCHANGED) === */
+:root{
+  --bg:#000;
+  --fg:#fff;
+  --muted:rgba(255,255,255,.42);
+  --accent:hsl(215 85% 58%);
+  --accent-soft:hsl(215 85% 58% / .35);
+  --focus:.5;
+  --line-width:220px;
+  --line-core-alpha:.62;
+  --line-halo-alpha:.26;
+  --line-halo:18px;
+  --grain:.035;
+  --tap:0;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+html{color-scheme:dark}
+body{
+  background:radial-gradient(circle at 50% 40%, #06070a, #000 60%);
+  color:var(--fg);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+body::after{
+  content:"";
+  position:fixed;
+  top:0;bottom:0;left:50%;
+  width:1px;
+  background:linear-gradient(to bottom,transparent,var(--accent-soft),transparent);
+  opacity:calc(.25 + var(--tap)*.35);
+  transform:translateX(-.5px);
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    rgba(255,255,255,.015),
+    rgba(255,255,255,.015) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity:var(--grain);
+}
+.center{text-align:center}
+.omni-mark{
+  width:26px;height:26px;
+  margin:0 auto 10px;
+  border-radius:50%;
+  position:relative;
+}
+.omni-mark::after{
+  content:"";
+  position:absolute;inset:7px;
+  border-radius:50%;
+  background:var(--accent);
+  filter:blur(6px);
+  opacity:calc(.35 + var(--focus)*.6);
+  animation:breath 5.5s ease-in-out infinite;
+}
+@keyframes breath{
+  0%,100%{transform:scale(.92)}
+  50%{transform:scale(1.08)}
+}
+.status{
+  font-size:15px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.field{
+  margin:22px auto 0;
+  width:var(--line-width);
+  height:1px;
+  background:linear-gradient(to right,transparent,var(--accent),transparent);
+}
 </style>
 </head>
 
 <body>
 
-<!-- [HTML EXACTLY AS YOU PROVIDED — UNCHANGED] -->
+<div class="center">
+  <div class="omni-mark"></div>
+  <div class="status" id="status">adaptive equilibrium</div>
+  <div class="field"></div>
+</div>
 
 <script>
 /* ===============================
    OMNI CORE BRAIN v58
-   Unified Cognition Engine
 =============================== */
 (()=>{
 "use strict";
 
-const TAU=Math.PI*2, HALF=.5;
+const HALF=.5;
 const clamp=x=>x<0?0:x>1?1:x;
-const lerp=(a,b,t)=>a+(b-a)*t;
-const rand=()=>Math.random();
-const now=()=>performance.now();
-
 const BRAIN_KEY="omni_brain_core";
 
-/* ───── Default Brain ───── */
-const DEFAULT={
+const brain = JSON.parse(localStorage.getItem(BRAIN_KEY)) || {
   core:{mood:HALF,energy:HALF,curiosity:HALF,intent:HALF,attention:HALF},
-  meta:{sessions:0,time:0,interactions:0,level:0,entropy:0},
-  concepts:{},           // ← NEW
-  caps:{unlocked:[],affinity:{}},
-  last:{tap:0,cap:null,search:null}
+  meta:{sessions:0,time:0,interactions:0},
+  concepts:{},
+  last:{search:null}
 };
 
-let brain;
-try{
-  brain=JSON.parse(localStorage.getItem(BRAIN_KEY))||structuredClone(DEFAULT);
-}catch{
-  brain=structuredClone(DEFAULT);
-}
 brain.meta.sessions++;
 
-/* ───── Helpers ───── */
-const normalize=t=>t.toLowerCase().replace(/[^\w\s]/g,"").trim();
+function save(){
+  localStorage.setItem(BRAIN_KEY,JSON.stringify(brain));
+}
 
-/* ───── Concept Reinforcement ───── */
 function reinforceConcept(label){
-  const t=Date.now();
   if(!brain.concepts[label]){
-    brain.concepts[label]={
-      label,
-      count:0,
-      weight:.25,
-      first:t,
-      last:t
-    };
+    brain.concepts[label]={label,count:0,weight:.2,last:Date.now()};
   }
   const c=brain.concepts[label];
   c.count++;
-  c.weight=Math.min(1,c.weight+.18*(1-c.weight));
-  c.last=t;
+  c.weight=Math.min(1,c.weight+.15);
+  c.last=Date.now();
   brain.last.search=label;
 }
 
-/* ───── Concept Decay ───── */
-function decayConcepts(){
-  const t=Date.now();
-  const HALF_LIFE=1000*60*60*6;
+function decay(){
+  const now=Date.now();
   Object.values(brain.concepts).forEach(c=>{
-    c.weight*=Math.exp(-(t-c.last)/HALF_LIFE);
+    c.weight*=Math.exp(-(now-c.last)/(1000*60*60*6));
     if(c.weight<.04) delete brain.concepts[c.label];
   });
 }
 
-/* ───── Public Summary (for index.html) ───── */
-function publishSummary(){
+function summary(){
   const top=Object.values(brain.concepts)
     .sort((a,b)=>b.weight-a.weight)
     .slice(0,3)
     .map(c=>c.label.toUpperCase());
 
   localStorage.setItem("omni_brain_summary",JSON.stringify({
-    focus:brain.last.search,
     top,
-    mood:brain.core.mood,
-    attention:brain.core.attention
+    focus:brain.last.search,
+    attention:brain.core.attention,
+    mood:brain.core.mood
   }));
+
+  return top;
 }
 
-/* ───── Original Visual Logic (kept) ───── */
-const root=document.documentElement;
-const statusEl=document.getElementById("status");
-const capEl=document.getElementById("capability");
+/* LIVE MESSAGE BRIDGE */
+window.addEventListener("message",e=>{
+  const m=e.data;
+  if(!m||m.source!=="omni-index")return;
 
-const CAPS=[
-"Core","Signal","Field","Vector","Pattern","Echo","Schema","Pulse",
-"Resonance","Glyph","Halo","Prism","Spiral","Lumen","Horizon"
-];
+  if(m.type==="intent") reinforceConcept(m.value);
+  if(m.type==="submit") reinforceConcept(m.value);
 
-function updateTheme(){
-  const c=brain.core;
-  const hue=210+Math.sin(brain.meta.time/160*TAU)*18+c.curiosity*60;
-  root.style.setProperty("--accent",`hsl(${hue} 85% 58%)`);
-  root.style.setProperty("--line-width",150+c.attention*190+"px");
-  root.style.setProperty("--focus",c.attention.toFixed(3));
-  root.style.setProperty("--tap",brain.last.tap.toFixed(3));
-}
+  brain.core.attention=clamp(brain.core.attention+.08);
+  decay();
+  const top=summary();
+  save();
 
-function whisper(){
-  if(!brain.caps.unlocked.length||Math.random()>.25)return;
-  const cap=brain.caps.unlocked[Math.random()*brain.caps.unlocked.length|0];
-  capEl.textContent=cap;
-  capEl.classList.add("visible");
-  setTimeout(()=>capEl.classList.remove("visible"),2200);
-}
-
-function tick(){
-  brain.meta.time++;
-  decayConcepts();
-  publishSummary();
-
-  brain.meta.level=Math.floor(
-    brain.meta.sessions+
-    brain.meta.interactions*.6+
-    brain.core.curiosity*12
-  );
-
-  CAPS.forEach((c,i)=>{
-    if(brain.meta.level>i&&!brain.caps.unlocked.includes(c))
-      brain.caps.unlocked.push(c);
-  });
-
-  whisper();
-  updateTheme();
-  localStorage.setItem(BRAIN_KEY,JSON.stringify(brain));
-}
-
-function pulse(s=.25){
-  const c=brain.core;
-  c.attention=clamp(c.attention+s*.6);
-  c.intent=clamp(c.intent+s*.4);
-  c.energy=clamp(c.energy+s*.3);
-  c.curiosity=clamp(c.curiosity+s*.35);
-  brain.meta.interactions+=s*2;
-  brain.last.tap=clamp(brain.last.tap+s);
-}
-
-let last=now();
-function raf(){
-  const t=now(),dt=(t-last)/16.6; last=t;
-  const c=brain.core;
-  c.attention=clamp(c.attention-.002*dt);
-  c.mood=clamp(c.mood+(rand()-.5)*.002);
-  brain.last.tap=lerp(brain.last.tap,0,.06*dt);
-  requestAnimationFrame(raf);
-}
-
-/* ───── Inputs ───── */
-window.addEventListener("pointerdown",()=>pulse(.22));
-window.addEventListener("keydown",e=>{
-  if(e.key===" ") pulse(.3);
+  e.source.postMessage({
+    source:"omni-core",
+    type:"summary",
+    top
+  },"*");
 });
 
-/* ───── Boot ───── */
-setInterval(tick,1100);
-requestAnimationFrame(raf);
-tick();
-
-/* ───── Expose search hook ───── */
-window.OMNI_REINFORCE = reinforceConcept;
+setInterval(()=>{
+  decay();
+  summary();
+  save();
+},1200);
 
 })();
 </script>
