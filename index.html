@@ -84,7 +84,7 @@ footer{
 
 .help-btn:hover{ color:var(--fg); }
 
-/* ───────── Modal ───────── */
+/* ───────── Help Modal ───────── */
 
 .modal{
   position:fixed;
@@ -157,24 +157,15 @@ footer{
     #ffaa00
   );
   opacity:.75;
-  transition:
-    transform .45s cubic-bezier(.6,.1,.3,1),
-    opacity .3s,
-    filter .3s;
-}
-
-.aurora-menu:hover span{
-  filter:drop-shadow(0 0 6px rgba(255,255,255,.35));
+  transition:transform .45s cubic-bezier(.6,.1,.3,1), opacity .3s;
 }
 
 .aurora-menu.active span:nth-child(1){
   transform:translateY(9px) rotate(45deg);
 }
-
 .aurora-menu.active span:nth-child(2){
   opacity:0;
 }
-
 .aurora-menu.active span:nth-child(3){
   transform:translateY(-9px) rotate(-45deg);
 }
@@ -218,6 +209,41 @@ footer{
   opacity:1;
   transform:translateY(-2px);
 }
+
+/* ───────── CORE Overlay ───────── */
+
+.core-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.88);
+  backdrop-filter:blur(18px);
+  display:none;
+  z-index:9999;
+}
+
+.core-overlay.show{
+  display:block;
+}
+
+.core-overlay iframe{
+  width:100%;
+  height:100%;
+  border:none;
+}
+
+.core-close{
+  position:fixed;
+  top:18px;
+  right:20px;
+  font-size:28px;
+  background:none;
+  border:none;
+  color:white;
+  opacity:.6;
+  cursor:pointer;
+  z-index:10000;
+}
+.core-close:hover{ opacity:1; }
 </style>
 </head>
 
@@ -225,21 +251,19 @@ footer{
 
 <!-- ───────── Hamburger ───────── -->
 <button class="aurora-menu" id="menuToggle" aria-label="Menu">
-  <span></span>
-  <span></span>
-  <span></span>
+  <span></span><span></span><span></span>
 </button>
 
 <!-- ───────── Fold Menu ───────── -->
 <nav class="fold-menu" id="menuPanel">
   <a href="#">Home</a>
   <a href="#">About</a>
-  <a href="#">Projects</a>
+  <a href="#" id="openCore">Core</a>
   <a href="#">Contact</a>
 </nav>
 
 <main>
-<a href="https://www.omnicorpusa.com" class="title-link" aria-label="OmniCorp Home">
+<a href="/" class="title-link" aria-label="OmniCorp Home">
 
 <!-- ===== OMNI LOGO ===== -->
 <svg class="logo" viewBox="0 0 460 150" xmlns="http://www.w3.org/2000/svg">
@@ -251,7 +275,6 @@ footer{
       <stop offset="85%" stop-color="#ffaa00"/>
       <stop offset="100%" stop-color="#00f5ff"/>
     </linearGradient>
-
     <filter id="outerGlow" x="-50%" y="-50%" width="200%" height="200%">
       <feGaussianBlur stdDeviation="6"/>
     </filter>
@@ -275,8 +298,7 @@ footer{
     <rect x="350" y="26" width="30" height="98" rx="9"/>
   </g>
 
-  <text x="392" y="46" font-size="16"
-        fill="currentColor" opacity=".55">™</text>
+  <text x="392" y="46" font-size="16" fill="currentColor" opacity=".55">™</text>
 </svg>
 
 </a>
@@ -288,6 +310,7 @@ footer{
 
 <button class="help-btn" id="helpOpen">Help</button>
 
+<!-- Help Modal -->
 <div class="modal" id="helpModal">
   <div class="modal-card">
     <button class="modal-close" id="helpClose">×</button>
@@ -295,23 +318,45 @@ footer{
   </div>
 </div>
 
+<!-- CORE Overlay -->
+<div class="core-overlay" id="coreOverlay">
+  <button class="core-close" aria-label="Close">×</button>
+  <iframe src="/core.html"></iframe>
+</div>
+
 <script>
 document.getElementById("year").textContent = new Date().getFullYear();
 
 /* Help modal */
-const modal = document.getElementById("helpModal");
-helpOpen.onclick = () => modal.classList.add("active");
-helpClose.onclick = () => modal.classList.remove("active");
-modal.onclick = e => e.target === modal && modal.classList.remove("active");
+const helpModal = document.getElementById("helpModal");
+helpOpen.onclick = () => helpModal.classList.add("active");
+helpClose.onclick = () => helpModal.classList.remove("active");
+helpModal.onclick = e => e.target === helpModal && helpModal.classList.remove("active");
 
-/* Menu toggle */
+/* Menu */
 const toggle = document.getElementById("menuToggle");
-const panel = document.getElementById("menuPanel");
-
+const menu = document.getElementById("menuPanel");
 toggle.onclick = () => {
   toggle.classList.toggle("active");
-  panel.classList.toggle("active");
+  menu.classList.toggle("active");
 };
+
+/* CORE overlay */
+const coreOverlay = document.getElementById("coreOverlay");
+document.getElementById("openCore").onclick = e => {
+  e.preventDefault();
+  menu.classList.remove("active");
+  toggle.classList.remove("active");
+  coreOverlay.classList.add("show");
+};
+
+document.querySelector(".core-close").onclick = () => {
+  coreOverlay.classList.remove("show");
+};
+
+window.addEventListener("keydown", e=>{
+  if(e.key === "Escape") coreOverlay.classList.remove("show");
+});
 </script>
 
 </body>
