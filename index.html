@@ -183,6 +183,7 @@ const supabase = window.supabase.createClient(
 const emailInput = document.getElementById("email-input");
 const btn = document.getElementById("login-btn");
 const status = document.getElementById("status");
+const socialLink = document.querySelector(".social-link");
 
 let signedIn = false;
 
@@ -232,6 +233,15 @@ supabase.auth.onAuthStateChange((_e, session) => {
     btn.textContent = data.session.user.email;
   }
 })();
+
+// ───────── NAVIGATION GUARD (ONLY NEW LOGIC) ─────────
+socialLink.addEventListener("click", async (e) => {
+  const { data } = await supabase.auth.getSession();
+  if (!data.session) {
+    e.preventDefault();
+    status.textContent = "Please log in to continue";
+  }
+});
 </script>
 
 </body>
