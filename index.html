@@ -10,26 +10,55 @@ html, body {
   width: 100%;
   height: 100%;
   margin: 0;
-}
-
-body {
-  display: grid;
-  place-items: center;
   background: #000;
   overflow: hidden;
+  color: #fff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Responsive outer scale remains untouched */
+/* ───────── SYSTEM SCALE LAYER (50%) ───────── */
+#system-scale {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform: scale(0.5);
+  transform-origin: center;
+}
+
+/* Logo container — untouched geometry */
 svg {
   width: min(92vw, 900px);
   height: auto;
   max-height: 90vh;
-  color: #ffffff;
+  transition: opacity 1.6s ease, filter 2s ease;
+}
+
+/* Silent system indicator */
+#system {
+  position: fixed;
+  bottom: 26px;
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity .6s ease;
+  pointer-events: none;
 }
 </style>
 </head>
 
 <body>
+
+<div id="system">OMNI SYSTEM ACTIVE</div>
+
+<!-- ───────── 50% SCALED SYSTEM SURFACE ───────── -->
+<div id="system-scale">
+
+<!-- ───────── LOGO (UNMODIFIED) ───────── -->
 
 <svg
   xmlns="http://www.w3.org/2000/svg"
@@ -38,7 +67,6 @@ svg {
   aria-label="OMNI logo">
 
   <defs>
-    <!-- Aurora gradient -->
     <linearGradient
       id="auroraHue"
       x1="-120%" y1="0%"
@@ -53,125 +81,127 @@ svg {
       <animate attributeName="x2" from="120%" to="240%" dur="26s" repeatCount="indefinite"/>
     </linearGradient>
 
-    <!-- Outer glow -->
     <filter id="outerGlow" x="-60%" y="-60%" width="220%" height="220%">
       <feGaussianBlur stdDeviation="6"/>
-      <feColorMatrix
-        values="
-          1 0 0 0 0
-          0 1 0 0 0
-          0 0 1 0 0
-          0 0 0 0.85 0"/>
+      <feColorMatrix values="
+        1 0 0 0 0
+        0 1 0 0 0
+        0 0 1 0 0
+        0 0 0 0.85 0"/>
     </filter>
 
-    <!-- Inner glow -->
     <filter id="innerGlow">
       <feGaussianBlur stdDeviation="2"/>
     </filter>
   </defs>
 
-  <!-- 🔽 50% RULE APPLIED HERE -->
-  <!-- Centered scale: (400 * .5 = 200, 150 * .5 = 75) -->
-  <g transform="translate(100 37.5) scale(0.5)">
+  <g
+    fill="none"
+    stroke="url(#auroraHue)"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    filter="url(#outerGlow)">
+    <animate attributeName="opacity"
+      values="0.58;0.66;0.58"
+      dur="22s"
+      repeatCount="indefinite"/>
 
-    <!-- Energy stroke -->
-    <g
-      fill="none"
-      stroke="url(#auroraHue)"
-      stroke-width="4"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      filter="url(#outerGlow)">
-      <animate attributeName="opacity"
-        values="0.58;0.66;0.58"
-        dur="22s"
-        repeatCount="indefinite"/>
-
-      <!-- O -->
-      <path d="
-        M70 22
-        C44 22 22 44 22 75
-        C22 106 44 128 70 128
-        C96 128 118 106 118 75
-        C118 44 96 22 70 22 Z"/>
-
-      <!-- M -->
-      <path d="
-        M132 124
-        V38 Q132 26 144 26
-        H148
-        L184 92
-        L220 26
-        H224 Q236 26 236 38
-        V124"/>
-
-      <!-- N -->
-      <path d="
-        M246 124
-        V38 Q246 26 258 26
-        H262
-        L318 114
-        Q322 124 332 124
-        V38 Q332 26 320 26"/>
-
-      <!-- I -->
-      <rect x="350" y="26" width="30" height="98" rx="15"/>
-    </g>
-
-    <!-- Core forms -->
-    <g fill="currentColor">
-      <path d="
-        M70 22
-        C44 22 22 44 22 75
-        C22 106 44 128 70 128
-        C96 128 118 106 118 75
-        C118 44 96 22 70 22 Z"/>
-
-      <circle
-        cx="70"
-        cy="75"
-        r="22"
-        opacity="0.9"
-        filter="url(#innerGlow)"/>
-
-      <circle
-        cx="70"
-        cy="75"
-        r="34"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1"
-        opacity="0.055">
-        <animateTransform
-          type="rotate"
-          from="0 70 75"
-          to="360 70 75"
-          dur="90s"
-          repeatCount="indefinite"/>
-      </circle>
-
-      <path d="
-        M132 124
-        V38 Q132 26 144 26
-        H148
-        L184 92
-        L220 26
-        H224 Q236 26 236 38
-        V124"/>
-
-      <path d="
-        M246 124
-        V38 Q246 26 258 26
-        H262
-        L318 114
-        Q322 124 332 124
-        V38 Q332 26 320 26"/>
-
-      <rect x="350" y="26" width="30" height="98" rx="15"/>
-    </g>
-
+    <path d="M70 22 C44 22 22 44 22 75 C22 106 44 128 70 128 C96 128 118 106 118 75 C118 44 96 22 70 22 Z"/>
+    <path d="M132 124 V38 Q132 26 144 26 H148 L184 92 L220 26 H224 Q236 26 236 38 V124"/>
+    <path d="M246 124 V38 Q246 26 258 26 H262 L318 114 Q322 124 332 124 V38 Q332 26 320 26"/>
+    <rect x="350" y="26" width="30" height="98" rx="15"/>
   </g>
+
+  <g fill="currentColor">
+    <path d="M70 22 C44 22 22 44 22 75 C22 106 44 128 70 128 C96 128 118 106 118 75 C118 44 96 22 70 22 Z"/>
+
+    <circle cx="70" cy="75" r="22" opacity="0.9" filter="url(#innerGlow)"/>
+
+    <circle
+      cx="70"
+      cy="75"
+      r="34"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1"
+      opacity="0.055">
+      <animateTransform
+        type="rotate"
+        from="0 70 75"
+        to="360 70 75"
+        dur="90s"
+        repeatCount="indefinite"/>
+    </circle>
+
+    <path d="M132 124 V38 Q132 26 144 26 H148 L184 92 L220 26 H224 Q236 26 236 38 V124"/>
+    <path d="M246 124 V38 Q246 26 258 26 H262 L318 114 Q322 124 332 124 V38 Q332 26 320 26"/>
+    <rect x="350" y="26" width="30" height="98" rx="15"/>
+  </g>
+
 </svg>
+
+</div>
+
+<!-- ───────── SYSTEM BRAIN ───────── -->
+
+<script>
+/* ─────────────────────────────────────────────
+   OMNI SYSTEM BRAIN v1.4
+   Global scale applied. Logo untouched.
+───────────────────────────────────────────── */
+
+const clamp=(v,min=0,max=1)=>Math.max(min,Math.min(max,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+
+const brain = JSON.parse(localStorage.getItem("omni_brain")) || {
+  attention:.5,
+  curiosity:.5,
+  energy:.5,
+  mood:.5,
+  memory:{ visits:0, dwell:0 }
+};
+
+brain.memory.visits++;
+
+let visible = true;
+document.addEventListener("visibilitychange",()=>{
+  visible = !document.hidden;
+});
+
+window.addEventListener("mousemove",()=>{
+  brain.curiosity = clamp(brain.curiosity + .01);
+});
+
+const logo = document.querySelector("svg");
+const system = document.getElementById("system");
+
+function loop(){
+  brain.attention = clamp(
+    brain.attention + (visible ? .004 : -.012)
+  );
+
+  brain.curiosity = clamp(brain.curiosity - .002);
+  brain.energy = lerp(brain.energy, brain.attention, .02);
+  brain.mood = lerp(brain.mood, .45 + brain.energy*.3, .01);
+
+  logo.style.opacity = lerp(.62, 1, brain.attention);
+  logo.style.filter =
+    `drop-shadow(0 0 ${lerp(6,14,brain.energy)}px rgba(255,255,255,.15))`;
+
+  system.style.opacity = brain.attention > .85 ? .35 : 0;
+
+  brain.memory.dwell += .016;
+
+  requestAnimationFrame(loop);
+}
+
+loop();
+
+window.addEventListener("beforeunload",()=>{
+  localStorage.setItem("omni_brain", JSON.stringify(brain));
+});
+</script>
 
 </body>
 </html>
