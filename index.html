@@ -63,26 +63,30 @@ footer{
   color:var(--muted);
 }
 
-/* ───────── Help ───────── */
+/* ───────── Help Button (Smaller) ───────── */
 
 .help-btn{
   position:fixed;
-  bottom:18px;
-  right:18px;
-  padding:8px 16px;
+  bottom:16px;
+  right:16px;
+  padding:5px 10px;
   border-radius:999px;
   border:1px solid currentColor;
   background:transparent;
   color:var(--muted);
-  font-size:11px;
+  font-size:9px;
   font-weight:600;
-  letter-spacing:.08em;
+  letter-spacing:.1em;
   text-transform:uppercase;
   cursor:pointer;
   z-index:10;
+  opacity:.7;
 }
 
-.help-btn:hover{ color:var(--fg); }
+.help-btn:hover{
+  opacity:1;
+  color:var(--fg);
+}
 
 /* ───────── Help Modal ───────── */
 
@@ -101,10 +105,10 @@ footer{
 
 .modal-card{
   background:var(--bg);
-  border-radius:16px;
-  padding:26px 22px 22px;
+  border-radius:14px;
+  padding:22px 20px 20px;
   width:90%;
-  max-width:260px;
+  max-width:240px;
   box-shadow:0 30px 90px rgba(0,0,0,.4);
   text-align:center;
   position:relative;
@@ -112,160 +116,31 @@ footer{
 
 .modal-card p{
   margin:0;
-  font-size:14px;
+  font-size:13px;
   color:var(--muted);
 }
 
 .modal-close{
   position:absolute;
-  top:10px;
-  right:14px;
+  top:8px;
+  right:12px;
   border:none;
   background:transparent;
   color:var(--muted);
-  font-size:18px;
+  font-size:16px;
   cursor:pointer;
 }
 
 .modal-close:hover{ color:var(--fg); }
-
-/* ───────── Aurora Hamburger ───────── */
-
-.aurora-menu{
-  position:fixed;
-  top:20px;
-  right:20px;
-  width:34px;
-  height:28px;
-  background:none;
-  border:none;
-  cursor:pointer;
-  display:grid;
-  gap:6px;
-  z-index:25;
-}
-
-.aurora-menu span{
-  width:100%;
-  height:3px;
-  border-radius:4px;
-  background:linear-gradient(
-    90deg,
-    #00f5ff,
-    #7cff00,
-    #ff00e5,
-    #ffaa00
-  );
-  opacity:.75;
-  transition:transform .45s cubic-bezier(.6,.1,.3,1), opacity .3s;
-}
-
-.aurora-menu.active span:nth-child(1){
-  transform:translateY(9px) rotate(45deg);
-}
-.aurora-menu.active span:nth-child(2){
-  opacity:0;
-}
-.aurora-menu.active span:nth-child(3){
-  transform:translateY(-9px) rotate(-45deg);
-}
-
-/* ───────── Fold Menu ───────── */
-
-.fold-menu{
-  position:fixed;
-  inset:0;
-  display:grid;
-  place-content:center;
-  gap:28px;
-  background:radial-gradient(
-    circle at top right,
-    rgba(255,255,255,.08),
-    rgba(0,0,0,.85) 60%
-  );
-  backdrop-filter:blur(14px);
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .4s ease;
-  z-index:20;
-}
-
-.fold-menu.active{
-  opacity:1;
-  pointer-events:auto;
-}
-
-.fold-menu a{
-  font-size:20px;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  text-decoration:none;
-  color:var(--fg);
-  opacity:.75;
-  transition:opacity .25s, transform .25s;
-}
-
-.fold-menu a:hover{
-  opacity:1;
-  transform:translateY(-2px);
-}
-
-/* ───────── CORE Overlay ───────── */
-
-.core-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.88);
-  backdrop-filter:blur(18px);
-  display:none;
-  z-index:9999;
-}
-
-.core-overlay.show{
-  display:block;
-}
-
-.core-overlay iframe{
-  width:100%;
-  height:100%;
-  border:none;
-}
-
-.core-close{
-  position:fixed;
-  top:18px;
-  right:20px;
-  font-size:28px;
-  background:none;
-  border:none;
-  color:white;
-  opacity:.6;
-  cursor:pointer;
-  z-index:10000;
-}
-.core-close:hover{ opacity:1; }
 </style>
 </head>
 
 <body>
 
-<!-- ───────── Hamburger ───────── -->
-<button class="aurora-menu" id="menuToggle" aria-label="Menu">
-  <span></span><span></span><span></span>
-</button>
-
-<!-- ───────── Fold Menu ───────── -->
-<nav class="fold-menu" id="menuPanel">
-  <a href="#">Home</a>
-  <a href="#">About</a>
-  <a href="#" id="openCore">Core</a>
-  <a href="#">Contact</a>
-</nav>
-
 <main>
 <a href="/" class="title-link" aria-label="OmniCorp Home">
 
-<!-- ===== OMNI LOGO ===== -->
+<!-- ───────── OMNI LOGO ───────── -->
 <svg class="logo" viewBox="0 0 460 150" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="auroraHue" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -318,45 +193,14 @@ footer{
   </div>
 </div>
 
-<!-- CORE Overlay -->
-<div class="core-overlay" id="coreOverlay">
-  <button class="core-close" aria-label="Close">×</button>
-  <iframe src="/core.html"></iframe>
-</div>
-
 <script>
 document.getElementById("year").textContent = new Date().getFullYear();
 
-/* Help modal */
 const helpModal = document.getElementById("helpModal");
 helpOpen.onclick = () => helpModal.classList.add("active");
 helpClose.onclick = () => helpModal.classList.remove("active");
-helpModal.onclick = e => e.target === helpModal && helpModal.classList.remove("active");
-
-/* Menu */
-const toggle = document.getElementById("menuToggle");
-const menu = document.getElementById("menuPanel");
-toggle.onclick = () => {
-  toggle.classList.toggle("active");
-  menu.classList.toggle("active");
-};
-
-/* CORE overlay */
-const coreOverlay = document.getElementById("coreOverlay");
-document.getElementById("openCore").onclick = e => {
-  e.preventDefault();
-  menu.classList.remove("active");
-  toggle.classList.remove("active");
-  coreOverlay.classList.add("show");
-};
-
-document.querySelector(".core-close").onclick = () => {
-  coreOverlay.classList.remove("show");
-};
-
-window.addEventListener("keydown", e=>{
-  if(e.key === "Escape") coreOverlay.classList.remove("show");
-});
+helpModal.onclick = e =>
+  e.target === helpModal && helpModal.classList.remove("active");
 </script>
 
 </body>
