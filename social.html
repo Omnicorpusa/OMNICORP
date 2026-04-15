@@ -1,370 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<title>m</title>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta charset="utf-8">
+<title>OMNI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-:root{
-  --bg:#ffffff;
-  --fg:#0b0b0d;
-  --muted:rgba(11,11,13,.45);
-  --line:rgba(11,11,13,.1);
-  --paper:#f6f7f8;
-  --accent:hsl(210 90% 56%);
-  --accent-soft:hsla(210,90%,56%,.14);
-  --green:hsl(150 70% 45%);
-  --yellow:hsl(45 90% 55%);
-  --radius:16px;
-  --pad:16px;
-  --max:720px;
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
 }
 
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#000;
-    --fg:#fff;
-    --muted:rgba(255,255,255,.45);
-    --line:rgba(255,255,255,.12);
-    --paper:#0c0d10;
-    --accent:hsl(210 90% 62%);
-    --accent-soft:hsla(210,90%,62%,.18);
-  }
+body {
+  display: grid;
+  place-items: center;
+  background: #000;
+  overflow: hidden;
 }
 
-*{box-sizing:border-box}
-html,body{margin:0;height:100%}
-
-body{
-  background:var(--bg);
-  color:var(--fg);
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,
-    "Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  display:flex;
-  justify-content:center;
-}
-
-/* ───────── App ───────── */
-
-.app{
-  width:100%;
-  max-width:var(--max);
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-}
-
-/* Header */
-header{
-  padding:22px 16px 18px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.logo-link{
-  display:flex;
-  align-items:center;
-  height:28px;
-  color:var(--accent);
-  text-decoration:none;
-}
-
-.logo-link svg{height:100%}
-
-.presence{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:12px;
-  color:var(--muted);
-}
-
-.dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:var(--muted);
-}
-
-/* Feed */
-.feed{
-  flex:1;
-  padding:20px 0 120px;
-}
-
-.post{
-  margin:0 16px 14px;
-  padding:var(--pad);
-  background:var(--paper);
-  border-radius:var(--radius);
-}
-
-.post time{
-  font-size:11px;
-  color:var(--muted);
-}
-
-.post p{
-  margin:8px 0 10px;
-  font-size:15px;
-  line-height:1.55;
-}
-
-/* Composer */
-.composer{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  max-width:var(--max);
-  background:var(--bg);
-  border-top:1px solid var(--line);
-  padding:12px 16px 16px;
-}
-
-textarea{
-  width:100%;
-  min-height:56px;
-  resize:none;
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:12px 14px;
-  font-size:15px;
-  background:var(--paper);
-  color:var(--fg);
-}
-
-textarea:focus{
-  outline:none;
-  border-color:var(--accent);
-  box-shadow:0 0 0 2px var(--accent-soft);
-}
-
-.meta{
-  margin-top:6px;
-  display:flex;
-  justify-content:space-between;
-  font-size:11px;
-  color:var(--muted);
-}
-
-button{
-  border:1px solid var(--line);
-  background:var(--paper);
-  color:var(--fg);
-  padding:6px 12px;
-  border-radius:10px;
-  font-size:12px;
-  cursor:pointer;
-}
-
-button:hover{
-  border-color:var(--accent);
-  color:var(--accent);
-}
-
-/* ───────── Auth Redesign ───────── */
-
-.auth{
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-  padding:24px;
-}
-
-.auth-card{
-  width:100%;
-  max-width:360px;
-  background:var(--paper);
-  border:1px solid var(--line);
-  border-radius:24px;
-  padding:28px 26px 30px;
-  text-align:center;
-  box-shadow:0 8px 30px rgba(0,0,0,.08);
-}
-
-.auth-logo{
-  width:40px;
-  height:40px;
-  margin:0 auto 14px;
-  color:var(--accent);
-}
-
-.auth-logo svg{
-  width:100%;
-  height:100%;
-}
-
-.auth h1{
-  margin:6px 0 6px;
-  font-size:20px;
-  font-weight:600;
-}
-
-.auth-sub{
-  margin:0 0 18px;
-  font-size:13px;
-  line-height:1.45;
-  color:var(--muted);
-}
-
-.auth input{
-  width:100%;
-  padding:12px 14px;
-  font-size:14px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background:var(--bg);
-  color:var(--fg);
-  margin-bottom:14px;
-}
-
-.auth input:focus{
-  outline:none;
-  border-color:var(--accent);
-  box-shadow:0 0 0 2px var(--accent-soft);
-}
-
-.auth button.primary{
-  width:100%;
-  padding:10px 14px;
-  border-radius:14px;
-  border:1px solid var(--accent);
-  background:var(--accent);
-  color:#fff;
-  font-size:14px;
-  font-weight:500;
-}
-
-.auth-note{
-  margin-top:12px;
-  font-size:11px;
-  color:var(--muted);
+/* Responsive outer scale remains untouched */
+svg {
+  width: min(92vw, 900px);
+  height: auto;
+  max-height: 90vh;
+  color: #ffffff;
 }
 </style>
 </head>
 
 <body>
 
-<!-- APP -->
-<div class="app" id="app" hidden>
-  <header>
-    <a class="logo-link">
-      <svg viewBox="0 0 64 64">
-        <path d="M16 42c0-14 16-14 16 0v14 M32 42c0-14 16-14 16 0"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="6"
-          stroke-linecap="round"/>
-      </svg>
-    </a>
-    <div class="presence">
-      <div class="dot" id="dot"></div>
-      <span id="state">online</span>
-    </div>
-  </header>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 400 150"
+  role="img"
+  aria-label="OMNI logo">
 
-  <section id="feed" class="feed"></section>
+  <defs>
+    <!-- Aurora gradient -->
+    <linearGradient
+      id="auroraHue"
+      x1="-120%" y1="0%"
+      x2="120%"  y2="0%"
+      gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00f5ff"/>
+      <stop offset="28%" stop-color="#7cff00"/>
+      <stop offset="58%" stop-color="#ff00e5"/>
+      <stop offset="82%" stop-color="#ffaa00"/>
+      <stop offset="100%" stop-color="#00f5ff"/>
+      <animate attributeName="x1" from="-120%" to="0%" dur="26s" repeatCount="indefinite"/>
+      <animate attributeName="x2" from="120%" to="240%" dur="26s" repeatCount="indefinite"/>
+    </linearGradient>
 
-  <div class="composer">
-    <textarea id="input" placeholder="Write."></textarea>
-    <div class="meta">
-      <span id="stats">0 words</span>
-      <button id="send">Send</button>
-    </div>
-  </div>
-</div>
+    <!-- Outer glow -->
+    <filter id="outerGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="6"/>
+      <feColorMatrix
+        values="
+          1 0 0 0 0
+          0 1 0 0 0
+          0 0 1 0 0
+          0 0 0 0.85 0"/>
+    </filter>
 
-<!-- AUTH -->
-<div class="auth" id="auth">
-  <div class="auth-card">
-    <div class="auth-logo">
-      <svg viewBox="0 0 64 64">
-        <path d="M16 42c0-14 16-14 16 0v14 M32 42c0-14 16-14 16 0"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="6"
-          stroke-linecap="round"/>
-      </svg>
-    </div>
+    <!-- Inner glow -->
+    <filter id="innerGlow">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>
 
-    <h1>Sign in</h1>
-    <p class="auth-sub">
-      A quiet place to write.<br/>
-      We’ll email you a magic link.
-    </p>
+  <!-- 🔽 50% RULE APPLIED HERE -->
+  <!-- Centered scale: (400 * .5 = 200, 150 * .5 = 75) -->
+  <g transform="translate(100 37.5) scale(0.5)">
 
-    <input id="email" type="email" placeholder="email@example.com"/>
-    <button id="login" class="primary">Send magic link</button>
-    <p class="auth-note">No password. No spam.</p>
-  </div>
-</div>
+    <!-- Energy stroke -->
+    <g
+      fill="none"
+      stroke="url(#auroraHue)"
+      stroke-width="4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      filter="url(#outerGlow)">
+      <animate attributeName="opacity"
+        values="0.58;0.66;0.58"
+        dur="22s"
+        repeatCount="indefinite"/>
 
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+      <!-- O -->
+      <path d="
+        M70 22
+        C44 22 22 44 22 75
+        C22 106 44 128 70 128
+        C96 128 118 106 118 75
+        C118 44 96 22 70 22 Z"/>
 
-<script type="module">
-const supabase = window.supabase.createClient(
-  "https://stywczdwpclejhxovpod.supabase.co",
-  "sb_publishable_ObcAyL8IIArKAXUC0m1cSA_xcC6qg0j"
-);
+      <!-- M -->
+      <path d="
+        M132 124
+        V38 Q132 26 144 26
+        H148
+        L184 92
+        L220 26
+        H224 Q236 26 236 38
+        V124"/>
 
-const app = document.getElementById("app");
-const authUI = document.getElementById("auth");
+      <!-- N -->
+      <path d="
+        M246 124
+        V38 Q246 26 258 26
+        H262
+        L318 114
+        Q322 124 332 124
+        V38 Q332 26 320 26"/>
 
-const feed = document.getElementById("feed");
-const input = document.getElementById("input");
-const send = document.getElementById("send");
-const stats = document.getElementById("stats");
+      <!-- I -->
+      <rect x="350" y="26" width="30" height="98" rx="15"/>
+    </g>
 
-const words = t => t.trim() ? t.trim().split(/\s+/).length : 0;
-input.oninput = () => stats.textContent = `${words(input.value)} words`;
+    <!-- Core forms -->
+    <g fill="currentColor">
+      <path d="
+        M70 22
+        C44 22 22 44 22 75
+        C22 106 44 128 70 128
+        C96 128 118 106 118 75
+        C118 44 96 22 70 22 Z"/>
 
-const { data } = await supabase.auth.getSession();
-const user = data.session?.user;
+      <circle
+        cx="70"
+        cy="75"
+        r="22"
+        opacity="0.9"
+        filter="url(#innerGlow)"/>
 
-if (!user) {
-  authUI.hidden = false;
-  app.hidden = true;
+      <circle
+        cx="70"
+        cy="75"
+        r="34"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1"
+        opacity="0.055">
+        <animateTransform
+          type="rotate"
+          from="0 70 75"
+          to="360 70 75"
+          dur="90s"
+          repeatCount="indefinite"/>
+      </circle>
 
-  document.getElementById("login").onclick = async () => {
-    const email = document.getElementById("email").value;
-    if (!email) return;
-    await supabase.auth.signInWithOtp({ email });
-    alert("Check your email for the magic link.");
-  };
-} else {
-  authUI.hidden = true;
-  app.hidden = false;
-}
+      <path d="
+        M132 124
+        V38 Q132 26 144 26
+        H148
+        L184 92
+        L220 26
+        H224 Q236 26 236 38
+        V124"/>
 
-/* Posts (minimal) */
-async function load(){
-  const { data } = await supabase
-    .from("posts")
-    .select("*")
-    .order("created_at",{ascending:false});
-  feed.innerHTML="";
-  (data||[]).forEach(p=>{
-    const el=document.createElement("div");
-    el.className="post";
-    el.innerHTML=`<time>now</time><p>${p.content}</p>`;
-    feed.appendChild(el);
-  });
-}
+      <path d="
+        M246 124
+        V38 Q246 26 258 26
+        H262
+        L318 114
+        Q322 124 332 124
+        V38 Q332 26 320 26"/>
 
-send.onclick = async()=>{
-  const text=input.value.trim();
-  if(!text) return;
-  await supabase.from("posts").insert({ content:text, user_id:user.id });
-  input.value="";
-  stats.textContent="0 words";
-  load();
-};
+      <rect x="350" y="26" width="30" height="98" rx="15"/>
+    </g>
 
-if (user) load();
-</script>
+  </g>
+</svg>
 
 </body>
 </html>
